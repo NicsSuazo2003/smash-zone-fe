@@ -1,6 +1,4 @@
-// src/pages/admin/Settings.tsx
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Settings as SettingsIcon,
   CalendarOff,
@@ -12,7 +10,6 @@ import {
   Lock,
   CheckCircle2,
   AlertCircle,
-  Clock,
   Wallet,
   QrCode,
   Smartphone,
@@ -24,12 +21,12 @@ import {
   CloudSun,
   Sun,
   Moon,
-  Power,                                  // ⭐ NEW
+  Power,
 } from 'lucide-react';
 
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { StaffLayout } from '@/components/layout/StaffLayout';
-import { useClientStore } from '@/stores/clientStore';   // ⭐ NEW
+import { useClientStore } from '@/stores/clientStore';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -66,19 +63,9 @@ const ICON_OPTIONS = [
   { value: 'Smartphone', icon: Smartphone },
   { value: 'QrCode', icon: QrCode },
   { value: 'Banknote', icon: Banknote },
-  { value: 'CreditCard', icon: CreditCardIcon },
   { value: 'Wallet', icon: Wallet },
   { value: 'Building2', icon: Building2 },
 ];
-
-function CreditCardIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="5" width="20" height="14" rx="2" />
-      <line x1="2" y1="10" x2="22" y2="10" />
-    </svg>
-  );
-}
 
 export function Settings() {
   const { user } = useAuthStore();
@@ -94,7 +81,6 @@ export function Settings() {
 
   const { updateProfile, changePassword } = useAuthStore();
 
-  // ─── Profile state ───
   const [selectedCourtId, setSelectedCourtId] = useState<string>('');
   const [blockDate, setBlockDate] = useState(toISODate(addDays(new Date(), 7)));
   const [blockReason, setBlockReason] = useState('');
@@ -114,7 +100,6 @@ export function Settings() {
     text: string;
   } | null>(null);
 
-  // ─── Password state ───
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -125,7 +110,6 @@ export function Settings() {
     text: string;
   } | null>(null);
 
-  // ─── Payment methods ───
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [loadingPaymentMethods, setLoadingPaymentMethods] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -137,7 +121,6 @@ export function Settings() {
     text: string;
   } | null>(null);
 
-  // ─── Venue Amenities ───
   const [amenities, setAmenities] = useState<AmenityItem[]>([]);
   const [editingAmenityIdx, setEditingAmenityIdx] = useState<number | null>(null);
   const [draftAmenity, setDraftAmenity] = useState<AmenityItem>({
@@ -151,7 +134,6 @@ export function Settings() {
     text: string;
   } | null>(null);
 
-  // ─── Booking Window ───
   const [maxAdvanceDays, setMaxAdvanceDays] = useState<number>(90);
   const [savingBookingWindow, setSavingBookingWindow] = useState(false);
   const [bookingWindowMsg, setBookingWindowMsg] = useState<{
@@ -159,7 +141,6 @@ export function Settings() {
     text: string;
   } | null>(null);
 
-  // ─── Bookings Enabled toggle ─── ⭐ NEW
   const [bookingsEnabled, setBookingsEnabled] = useState<boolean>(true);
   const [savingBookingsEnabled, setSavingBookingsEnabled] = useState(false);
   const [bookingsEnabledMsg, setBookingsEnabledMsg] = useState<{
@@ -167,10 +148,8 @@ export function Settings() {
     text: string;
   } | null>(null);
 
-  // ─── QR upload ───
   const [uploadingQR, setUploadingQR] = useState(false);
 
-  // ─── Payment method form ───
   const [formData, setFormData] = useState<Partial<PaymentMethod>>({
     name: '',
     type: 'other',
@@ -199,9 +178,9 @@ export function Settings() {
         setClientSettings(settings);
         setAmenities(settings.available_amenities ?? []);
         setMaxAdvanceDays(settings.max_advance_booking_days ?? 90);
-        setBookingsEnabled(settings.bookings_enabled ?? true);   // ⭐ NEW
+        setBookingsEnabled(settings.bookings_enabled ?? true);
       } catch (err) {
-        console.error('Failed to load client settings:', err);
+        console.error('Failed to load settings:', err);
       } finally {
         setLoadingSettings(false);
       }
@@ -264,7 +243,7 @@ export function Settings() {
             icon: 'Smartphone',
             enabled: true,
             config: {
-              account_name: APP_CONFIG.paymentAccountName || 'Smash Point Pickle Sports Center',
+              account_name: APP_CONFIG.paymentAccountName || 'Smash Zone Recreational Hub',
               account_number: APP_CONFIG.paymentNumber || '09XX XXX XXXX',
             },
             sort_order: 0,
@@ -284,7 +263,6 @@ export function Settings() {
       setPaymentMethods(methods);
       return true;
     } catch (error) {
-      console.error('Failed to save payment methods:', error);
       setMethodMsg({ type: 'error', text: 'Failed to save payment methods' });
       return false;
     }
@@ -297,22 +275,19 @@ export function Settings() {
       const uploadData = new FormData();
       uploadData.append('file', file);
       const token = localStorage.getItem('admin_token');
-
       const baseUrl = import.meta.env.VITE_API_BASE_URL ?? APP_CONFIG.apiUrl;
 
       const response = await fetch(`${baseUrl}/api/files/upload`, {
         method: 'POST',
         headers: {
-          'X-Client-Subdomain':
-            import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashpoint',
+          'X-Client-Subdomain': import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashzone',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: uploadData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Upload failed: ${response.status}`);
+        throw new Error('Upload failed');
       }
 
       const data = await response.json();
@@ -485,7 +460,6 @@ export function Settings() {
     if (!isFullDay && selectedSlotIds.length > 0) {
       const selectedSlots = slots.filter((s) => selectedSlotIds.includes(s.id));
       const sorted = selectedSlots.sort((a, b) => a.start_time.localeCompare(b.start_time));
-
       const first = sorted[0];
       const last = sorted[sorted.length - 1];
 
@@ -498,13 +472,11 @@ export function Settings() {
       if (selectedCourtId) {
         await loadBlockedDates(selectedCourtId);
       }
-
       setBlockReason('');
       setSelectedSlotIds([]);
       setIsFullDay(true);
     } catch (err) {
-      console.error('Failed to block date:', err);
-      alert('Failed to block date. Please check the console for details.');
+      alert('Failed to block date.');
     }
   };
 
@@ -602,15 +574,6 @@ export function Settings() {
     const amenity = amenities[idx];
     if (!amenity) return;
 
-    const affected = courts.filter((c) => c.amenities?.includes(amenity.name));
-
-    if (affected.length > 0) {
-      const confirmed = window.confirm(
-        `Remove "${amenity.name}"?\n\nIt's currently assigned to ${affected.length} court${affected.length === 1 ? '' : 's'}. Removing it from the master list will also remove it from those courts when you save.`
-      );
-      if (!confirmed) return;
-    }
-
     setAmenities(amenities.filter((_, i) => i !== idx));
     if (editingAmenityIdx === idx) setEditingAmenityIdx(null);
     setAmenitiesMsg(null);
@@ -661,12 +624,12 @@ export function Settings() {
   const renderSlotGrid = () => {
     if (loadingSlots)
       return (
-        <div className="py-6 text-center text-xs text-cream-muted">
+        <div className="py-6 text-center text-xs text-slate-400">
           <Loader2 className="mx-auto h-5 w-5 animate-spin" />
         </div>
       );
     if (slots.length === 0)
-      return <p className="text-xs text-cream-muted py-2">No slots available for this court.</p>;
+      return <p className="text-xs text-slate-500 py-2">No slots available for this court.</p>;
 
     const morning = slots.filter((s) => parseInt(s.start_time.split(':')[0]) < 12);
     const afternoon = slots.filter(
@@ -682,10 +645,10 @@ export function Settings() {
         <div className="mb-3">
           <div className="mb-1.5 flex items-center gap-2">
             {icon}
-            <span className="text-[10px] font-bold uppercase tracking-wider text-primary-300">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#3D1164]">
               {title}
             </span>
-            <div className="h-px flex-1 bg-neutral-700/60" />
+            <div className="h-px flex-1 bg-slate-200" />
           </div>
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
             {group.map((slot) => {
@@ -695,10 +658,10 @@ export function Settings() {
                   key={slot.id}
                   type="button"
                   onClick={() => toggleSlot(slot.id)}
-                  className={`rounded-lg border p-1.5 text-[11px] font-semibold transition-all ${
+                  className={`rounded-xl border p-2 text-[11px] font-bold transition-all shadow-xs ${
                     isSelected
-                      ? 'border-primary-400 bg-primary-500 text-white shadow-glow-blue'
-                      : 'border-neutral-700 bg-neutral-950/60 text-cream-muted hover:border-primary-400/50 hover:text-cream'
+                      ? 'border-[#3D1164] bg-[#3D1164] text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   {formatTimeRange(slot.start_time, slot.end_time)}
@@ -711,34 +674,34 @@ export function Settings() {
     };
 
     return (
-      <div className="rounded-xl border border-neutral-700 bg-neutral-950/40 p-3">
-        {renderGroup('Morning', <CloudSun className="h-3.5 w-3.5 text-primary-300" />, morning)}
-        {renderGroup('Afternoon', <Sun className="h-3.5 w-3.5 text-primary-300" />, afternoon)}
-        {renderGroup('Evening', <Moon className="h-3.5 w-3.5 text-primary-300" />, evening)}
+      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        {renderGroup('Morning', <CloudSun className="h-4 w-4 text-[#FF7A00]" />, morning)}
+        {renderGroup('Afternoon', <Sun className="h-4 w-4 text-[#FFA81A]" />, afternoon)}
+        {renderGroup('Evening', <Moon className="h-4 w-4 text-[#3D1164]" />, evening)}
       </div>
     );
   };
 
   return (
     <Layout>
-      <div className="container-page py-6 sm:py-8 text-cream">
+      <div className="container-page py-6 sm:py-8 text-slate-900">
         <div className="mb-6 sm:mb-8">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-cream sm:text-3xl">
+          <h1 className="font-display text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Settings
           </h1>
-          <p className="mt-1 text-xs text-cream-muted sm:text-sm">
-            Manage your account credentials, payout methods, and blocked schedules
+          <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+            Manage your staff account, payment options, and court maintenance blocks
           </p>
         </div>
 
         {loadingCourts ? (
           <LoadingSpinner className="py-16" />
         ) : (
-          <div className="space-y-5 sm:space-y-6">
-            {/* ─── Account Info ─── */}
-            <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
-              <h2 className="mb-4 flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                <SettingsIcon className="h-5 w-5 text-primary-300" />
+          <div className="space-y-6">
+            {/* Account Info */}
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
+              <h2 className="mb-4 flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                <SettingsIcon className="h-5 w-5 text-[#3D1164]" />
                 Account Profile
               </h2>
 
@@ -765,34 +728,35 @@ export function Settings() {
                 <div
                   className={`mt-4 flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
                     profileMsg.type === 'success'
-                      ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                      : 'border-error/40 bg-error/15 text-error'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                      : 'border-rose-200 bg-rose-50 text-rose-800'
                   }`}
                 >
                   {profileMsg.type === 'success' ? (
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                   ) : (
-                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
                   )}
                   {profileMsg.text}
                 </div>
               )}
 
-              <div className="mt-5 border-t border-neutral-700 pt-4">
+              <div className="mt-5 border-t border-slate-100 pt-4">
                 <Button
                   leftIcon={<Save className="h-4 w-4" />}
                   isLoading={savingProfile}
                   onClick={handleSaveProfile}
+                  className="bg-[#3D1164] hover:bg-[#5A1B91] text-white font-bold"
                 >
                   Save Profile
                 </Button>
               </div>
             </div>
 
-            {/* ─── Change Password ─── */}
-            <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
-              <h2 className="mb-4 flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                <Lock className="h-5 w-5 text-primary-300" />
+            {/* Change Password */}
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
+              <h2 className="mb-4 flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                <Lock className="h-5 w-5 text-[#3D1164]" />
                 Change Password
               </h2>
 
@@ -822,50 +786,49 @@ export function Settings() {
                 <div
                   className={`mt-4 flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
                     passwordMsg.type === 'success'
-                      ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                      : 'border-error/40 bg-error/15 text-error'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                      : 'border-rose-200 bg-rose-50 text-rose-800'
                   }`}
                 >
                   {passwordMsg.type === 'success' ? (
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                   ) : (
-                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
                   )}
                   {passwordMsg.text}
                 </div>
               )}
 
-              <div className="mt-5 border-t border-neutral-700 pt-4">
+              <div className="mt-5 border-t border-slate-100 pt-4">
                 <Button
                   variant="secondary"
                   leftIcon={<Save className="h-4 w-4" />}
                   isLoading={savingPassword}
                   onClick={handleChangePassword}
+                  className="bg-white border-slate-300 text-slate-800"
                 >
                   Update Password
                 </Button>
               </div>
             </div>
 
-            {/* ─── Venue Amenities ─── */}
+            {/* Venue Amenities */}
             {isAdmin && (
-              <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
                 <div className="mb-4">
-                  <h2 className="flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                    <Sparkles className="h-5 w-5 text-primary-300" />
+                  <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                    <Sparkles className="h-5 w-5 text-[#FF7A00]" />
                     Venue Amenities
                   </h2>
-                  <p className="mt-0.5 text-xs text-cream-muted sm:text-sm">
-                    Master list of amenities shown on the public landing page. Pick an icon and
-                    add a short description for each — descriptions only appear on the landing page.
+                  <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                    Amenities displayed to customers on the landing page.
                   </p>
                 </div>
 
                 {amenities.length === 0 ? (
-                  <div className="rounded-xl border border-neutral-700 bg-neutral-950/60 py-8 text-center">
-                    <Sparkles className="mx-auto h-10 w-10 text-cream-muted/30" />
-                    <p className="mt-3 text-sm font-semibold text-cream-muted">No amenities yet.</p>
-                    <p className="mt-0.5 text-xs text-cream-muted/70">Add your first one below.</p>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 py-8 text-center">
+                    <Sparkles className="mx-auto h-8 w-8 text-slate-300" />
+                    <p className="mt-2 text-sm font-semibold text-slate-600">No amenities yet.</p>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
@@ -876,7 +839,7 @@ export function Settings() {
                       return (
                         <div
                           key={`${amenity.name}-${idx}`}
-                          className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-3"
+                          className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5"
                         >
                           {isEditing ? (
                             <div className="space-y-3">
@@ -887,16 +850,16 @@ export function Settings() {
                                   onChange={(e) => updateAmenity(idx, { name: e.target.value })}
                                 />
                                 <div>
-                                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                                     Icon
                                   </label>
                                   <select
                                     value={amenity.icon}
                                     onChange={(e) => updateAmenity(idx, { icon: e.target.value })}
-                                    className="w-full rounded-xl border border-neutral-700 bg-neutral-950/70 px-3.5 py-2.5 text-sm text-cream transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                                    className="w-full rounded-2xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 focus:border-[#3D1164]"
                                   >
                                     {LUCIDE_ICON_OPTIONS.map((opt) => (
-                                      <option key={opt.value} value={opt.value} className="bg-neutral-900">
+                                      <option key={opt.value} value={opt.value}>
                                         {opt.label}
                                       </option>
                                     ))}
@@ -905,9 +868,8 @@ export function Settings() {
                               </div>
 
                               <Textarea
-                                label="Description (landing page only)"
+                                label="Description (landing page)"
                                 rows={2}
-                                placeholder="e.g. Pro-grade silica surface, low dust, all-weather"
                                 value={amenity.description ?? ''}
                                 onChange={(e) => updateAmenity(idx, { description: e.target.value })}
                               />
@@ -928,37 +890,29 @@ export function Settings() {
                             </div>
                           ) : (
                             <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-primary-400/30 bg-primary-500/15 text-primary-300">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#3D1164]">
                                 <Icon className="h-5 w-5" />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-bold text-cream">
+                                <p className="truncate text-sm font-bold text-slate-900">
                                   {amenity.name}
                                 </p>
-                                {amenity.description ? (
-                                  <p className="truncate text-xs text-cream-muted">
-                                    {amenity.description}
-                                  </p>
-                                ) : (
-                                  <p className="truncate text-xs italic text-cream-muted/50">
-                                    No description yet
-                                  </p>
-                                )}
+                                <p className="truncate text-xs text-slate-500">
+                                  {amenity.description || 'No description provided'}
+                                </p>
                               </div>
-                              <div className="flex shrink-0 items-center gap-1.5">
+                              <div className="flex items-center gap-1.5">
                                 <button
                                   type="button"
                                   onClick={() => setEditingAmenityIdx(idx)}
-                                  className="rounded-lg border border-neutral-600 bg-neutral-800/80 p-2 text-cream-muted transition hover:border-primary-400 hover:text-primary-300 active:scale-95"
-                                  title="Edit"
+                                  className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50"
                                 >
                                   <Edit3 className="h-4 w-4" />
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => removeAmenity(idx)}
-                                  className="rounded-lg border border-neutral-600 bg-neutral-800/80 p-2 text-cream-muted transition hover:border-error hover:text-error active:scale-95"
-                                  title="Remove"
+                                  className="rounded-xl border border-slate-200 bg-white p-2 text-rose-600 hover:bg-rose-50"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
@@ -971,88 +925,61 @@ export function Settings() {
                   </div>
                 )}
 
-                <div className="mt-4 space-y-3 rounded-xl border border-dashed border-neutral-700 bg-neutral-950/40 p-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-primary-300">
-                    Add new amenity
+                <div className="mt-4 space-y-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#3D1164]">
+                    Add New Amenity
                   </p>
-
                   <div className="grid gap-3 sm:grid-cols-[1fr_200px]">
                     <Input
                       label="Name"
-                      placeholder="e.g. Air Conditioned, Lockers, Pro Shop"
+                      placeholder="e.g. Air Conditioned Lounge, Pro Shop"
                       value={draftAmenity.name}
                       onChange={(e) => setDraftAmenity({ ...draftAmenity, name: e.target.value })}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addAmenity();
-                        }
-                      }}
                     />
                     <div>
-                      <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                      <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                         Icon
                       </label>
                       <select
                         value={draftAmenity.icon}
                         onChange={(e) => setDraftAmenity({ ...draftAmenity, icon: e.target.value })}
-                        className="w-full rounded-xl border border-neutral-700 bg-neutral-950/70 px-3.5 py-2.5 text-sm text-cream transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                        className="w-full rounded-2xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 focus:border-[#3D1164]"
                       >
                         {LUCIDE_ICON_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value} className="bg-neutral-900">
+                          <option key={opt.value} value={opt.value}>
                             {opt.label}
                           </option>
                         ))}
                       </select>
                     </div>
                   </div>
-
                   <Textarea
-                    label="Description (landing page only)"
+                    label="Description"
                     rows={2}
-                    placeholder="e.g. Pro-grade silica surface, low dust, all-weather"
+                    placeholder="Short description for guests..."
                     value={draftAmenity.description ?? ''}
-                    onChange={(e) =>
-                      setDraftAmenity({ ...draftAmenity, description: e.target.value })
-                    }
+                    onChange={(e) => setDraftAmenity({ ...draftAmenity, description: e.target.value })}
                   />
-
                   <div className="flex justify-end">
                     <Button
                       size="sm"
-                      type="button"
                       onClick={addAmenity}
                       disabled={!draftAmenity.name.trim()}
                       leftIcon={<Plus className="h-4 w-4" />}
+                      className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
                     >
                       Add
                     </Button>
                   </div>
                 </div>
 
-                {amenitiesMsg && (
-                  <div
-                    className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
-                      amenitiesMsg.type === 'success'
-                        ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                        : 'border-error/40 bg-error/15 text-error'
-                    }`}
-                  >
-                    {amenitiesMsg.type === 'success' ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 shrink-0" />
-                    )}
-                    {amenitiesMsg.text}
-                  </div>
-                )}
-
-                <div className="mt-4 flex justify-end border-t border-neutral-700 pt-4">
+                <div className="mt-5 flex justify-end border-t border-slate-100 pt-4">
                   <Button
                     size="md"
                     isLoading={savingAmenities}
                     leftIcon={<Save className="h-4 w-4" />}
                     onClick={saveAmenities}
+                    className="bg-[#3D1164] hover:bg-[#5A1B91] text-white font-bold"
                   >
                     Save Amenities
                   </Button>
@@ -1060,20 +987,18 @@ export function Settings() {
               </div>
             )}
 
-            {/* ─── Booking System Toggle ─── ⭐ NEW */}
+            {/* Master Online Bookings Toggle */}
             {isAdmin && (
-              <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                      <Power className="h-5 w-5 text-primary-300" />
-                      Booking System
+                    <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                      <Power className="h-5 w-5 text-[#FF7A00]" />
+                      Online Booking System
                     </h2>
-                    <p className="mt-0.5 text-xs text-cream-muted sm:text-sm">
-                      Turn customer-facing online bookings on or off. When off, the landing page
-                      shows a &quot;Bookings temporarily closed&quot; banner and customer bookings are
-                      rejected. Staff can still create manual bookings. Existing bookings are not
-                      affected.
+                    <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                      Master switch for customer bookings. When off, guests see &quot;Bookings temporarily closed&quot;.
+                      Staff can always create manual reservations.
                     </p>
                   </div>
 
@@ -1089,17 +1014,16 @@ export function Settings() {
                         setBookingsEnabledMsg(null);
                         try {
                           await adminService.updateSettings({ bookings_enabled: next });
-                          // Keep public client store in sync across open tabs
                           useClientStore.getState().setBookingsEnabled(next);
                           setBookingsEnabledMsg({
                             type: 'success',
-                            text: next ? 'Bookings are now OPEN.' : 'Bookings are now CLOSED.',
+                            text: next ? 'Online bookings OPEN.' : 'Online bookings CLOSED.',
                           });
                         } catch (err) {
                           setBookingsEnabled(prev);
                           setBookingsEnabledMsg({
                             type: 'error',
-                            text: err instanceof Error ? err.message : 'Failed to update.',
+                            text: 'Failed to update system state.',
                           });
                         } finally {
                           setSavingBookingsEnabled(false);
@@ -1108,57 +1032,39 @@ export function Settings() {
                       className="peer sr-only"
                       disabled={savingBookingsEnabled}
                     />
-                    <div className="peer h-7 w-12 rounded-full border border-neutral-600 bg-neutral-800 transition-all after:absolute after:top-[2px] after:left-[2px] after:h-6 after:w-6 after:rounded-full after:bg-white after:transition-all peer-checked:bg-accent-500 peer-checked:after:translate-x-5" />
+                    <div className="peer h-7 w-12 rounded-full border border-slate-300 bg-slate-200 transition-all after:absolute after:top-[2px] after:left-[2px] after:h-6 after:w-6 after:rounded-full after:bg-white after:shadow-sm after:transition-all peer-checked:bg-[#FF7A00] peer-checked:after:translate-x-5" />
                   </label>
                 </div>
 
                 <div
-                  className={`flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
+                  className={`flex items-center gap-2 rounded-2xl border p-3.5 text-xs font-semibold ${
                     bookingsEnabled
-                      ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                      : 'border-error/40 bg-error/15 text-error'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                      : 'border-amber-200 bg-amber-50 text-amber-800'
                   }`}
                 >
                   {bookingsEnabled ? (
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                   ) : (
-                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
                   )}
                   {bookingsEnabled
-                    ? 'Customers can currently book courts online. Staff manual bookings are always available.'
-                    : 'Online customer bookings are CLOSED. Staff can still create manual bookings.'}
+                    ? 'Customers can reserve courts online.'
+                    : 'Online customer booking is temporarily disabled.'}
                 </div>
-
-                {bookingsEnabledMsg && (
-                  <div
-                    className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
-                      bookingsEnabledMsg.type === 'success'
-                        ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                        : 'border-error/40 bg-error/15 text-error'
-                    }`}
-                  >
-                    {bookingsEnabledMsg.type === 'success' ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 shrink-0" />
-                    )}
-                    {bookingsEnabledMsg.text}
-                  </div>
-                )}
               </div>
             )}
 
-            {/* ─── Booking Window ─── */}
+            {/* Advance Booking Window */}
             {isAdmin && (
-              <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
                 <div className="mb-4">
-                  <h2 className="flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                    <CalendarDays className="h-5 w-5 text-primary-300" />
+                  <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                    <CalendarDays className="h-5 w-5 text-[#3D1164]" />
                     Booking Window
                   </h2>
-                  <p className="mt-0.5 text-xs text-cream-muted sm:text-sm">
-                    How far in advance customers can book. Use{' '}
-                    <strong className="text-cream">0</strong> for no limit.
+                  <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                    How far ahead customers can reserve. Use 0 for unlimited days.
                   </p>
                 </div>
 
@@ -1173,48 +1079,24 @@ export function Settings() {
                       const v = Number(e.target.value);
                       setMaxAdvanceDays(Number.isNaN(v) ? 0 : Math.max(0, Math.min(365, v)));
                     }}
-                    hint="e.g. 90 = customers can book up to ~3 months ahead. 0 = unlimited."
+                    hint="e.g. 90 = customers can book up to ~3 months ahead."
                   />
                 </div>
 
-                <p className="mt-3 text-xs text-cream-muted">
+                <p className="mt-3 text-xs text-slate-500 font-medium">
                   Currently:{' '}
-                  <span className="font-semibold text-primary-300">
+                  <span className="font-bold text-[#3D1164]">
                     {describeAdvanceWindow(maxAdvanceDays)}
                   </span>
-                  {maxAdvanceDays > 0 && (
-                    <>
-                      {' '}· Last bookable date:{' '}
-                      <span className="font-mono text-cream">
-                        {toISODate(addDays(new Date(), maxAdvanceDays))}
-                      </span>
-                    </>
-                  )}
                 </p>
 
-                {bookingWindowMsg && (
-                  <div
-                    className={`mt-4 flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
-                      bookingWindowMsg.type === 'success'
-                        ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                        : 'border-error/40 bg-error/15 text-error'
-                    }`}
-                  >
-                    {bookingWindowMsg.type === 'success' ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 shrink-0" />
-                    )}
-                    {bookingWindowMsg.text}
-                  </div>
-                )}
-
-                <div className="mt-4 flex justify-end border-t border-neutral-700 pt-4">
+                <div className="mt-4 flex justify-end border-t border-slate-100 pt-4">
                   <Button
                     size="md"
                     isLoading={savingBookingWindow}
                     leftIcon={<Save className="h-4 w-4" />}
                     onClick={saveBookingWindow}
+                    className="bg-[#3D1164] hover:bg-[#5A1B91] text-white font-bold"
                   >
                     Save Booking Window
                   </Button>
@@ -1222,17 +1104,17 @@ export function Settings() {
               </div>
             )}
 
-            {/* ─── Payment Methods ─── */}
+            {/* Payment Methods */}
             {isAdmin && (
-              <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                      <Wallet className="h-5 w-5 text-primary-300" />
-                      Checkout Payment Options
+                    <h2 className="flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                      <Wallet className="h-5 w-5 text-[#FF7A00]" />
+                      Payment Options (GCash / QR Ph)
                     </h2>
-                    <p className="mt-0.5 text-xs text-cream-muted sm:text-sm">
-                      Configure GCash, Bank Transfer, and QR codes displayed to clients during checkout
+                    <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                      Accounts and QR codes shown to customers during checkout
                     </p>
                   </div>
 
@@ -1243,6 +1125,7 @@ export function Settings() {
                       resetForm();
                       setShowAddModal(true);
                     }}
+                    className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
                   >
                     Add Method
                   </Button>
@@ -1250,113 +1133,91 @@ export function Settings() {
 
                 {loadingPaymentMethods ? (
                   <LoadingSpinner className="py-8" />
-                ) : paymentMethods.length === 0 ? (
-                  <div className="rounded-xl border border-neutral-700 bg-neutral-950/60 py-8 text-center">
-                    <Wallet className="mx-auto h-10 w-10 text-cream-muted/30" />
-                    <p className="mt-3 text-sm font-semibold text-cream-muted">
-                      No payment methods configured.
-                    </p>
-                  </div>
                 ) : (
                   <div className="space-y-3">
                     {paymentMethods
                       .sort((a, b) => a.sort_order - b.sort_order)
-                      .map((method) => {
-                        const IconComponent =
-                          ICON_OPTIONS.find((i) => i.value === method.icon)?.icon ||
-                          Smartphone;
-
-                        return (
-                          <div
-                            key={method.id}
-                            className="flex flex-col gap-3 rounded-xl border border-neutral-700 bg-neutral-950/70 p-4 sm:flex-row sm:items-center sm:justify-between"
-                          >
-                            <div className="flex min-w-0 items-center gap-3.5">
-                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary-400/30 bg-primary-500/20 text-primary-300 shadow-inner">
-                                <IconComponent className="h-5 w-5" />
-                              </div>
-
-                              <div className="min-w-0">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <p className="truncate font-bold text-cream text-sm sm:text-base">
-                                    {method.name}
-                                  </p>
-                                  <span
-                                    className={`rounded-full px-2.5 py-0.5 text-[9px] font-bold ${
-                                      method.enabled
-                                        ? 'border border-accent-400/40 bg-accent-500/20 text-accent-300'
-                                        : 'border border-error/40 bg-error/20 text-error'
-                                    }`}
-                                  >
-                                    {method.enabled ? 'Active' : 'Disabled'}
-                                  </span>
-                                </div>
-
-                                <p className="truncate text-xs text-cream-muted mt-0.5">
-                                  {method.type.replace('_', ' ').toUpperCase()}
-                                  {method.config?.account_name && (
-                                    <span> · {method.config.account_name}</span>
-                                  )}
-                                  {method.config?.account_number && (
-                                    <span className="font-mono ml-1 text-primary-300">
-                                      ({method.config.account_number})
-                                    </span>
-                                  )}
-                                </p>
-                              </div>
+                      .map((method) => (
+                        <div
+                          key={method.id}
+                          className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="flex items-center gap-3.5">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-[#FF7A00]">
+                              <Smartphone className="h-5 w-5" />
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 sm:justify-start">
-                              <label className="relative inline-flex cursor-pointer items-center">
-                                <input
-                                  type="checkbox"
-                                  checked={method.enabled}
-                                  onChange={() => handleToggleMethod(method.id)}
-                                  className="peer sr-only"
-                                />
-                                <div className="peer h-6 w-11 rounded-full border border-neutral-600 bg-neutral-800 transition-all after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-accent-500 peer-checked:after:translate-x-full peer-focus:outline-none" />
-                              </label>
-
-                              <button
-                                onClick={() => handleEditClick(method)}
-                                className="rounded-lg border border-neutral-600 bg-neutral-800/80 p-2 text-cream-muted transition hover:border-primary-400 hover:text-primary-300 active:scale-95"
-                                title="Edit Method"
-                              >
-                                <Edit3 className="h-4 w-4" />
-                              </button>
-
-                              <button
-                                onClick={() => handleDeleteMethod(method.id)}
-                                className="rounded-lg border border-neutral-600 bg-neutral-800/80 p-2 text-cream-muted transition hover:border-error hover:text-error active:scale-95"
-                                title="Delete Method"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-slate-900 text-sm sm:text-base">
+                                  {method.name}
+                                </p>
+                                <span
+                                  className={`rounded-full px-2.5 py-0.5 text-[9px] font-black ${
+                                    method.enabled
+                                      ? 'bg-emerald-100 text-emerald-800'
+                                      : 'bg-slate-200 text-slate-500'
+                                  }`}
+                                >
+                                  {method.enabled ? 'Active' : 'Disabled'}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500 mt-0.5">
+                                {method.config?.account_name && (
+                                  <span>{method.config.account_name} · </span>
+                                )}
+                                {method.config?.account_number && (
+                                  <span className="font-mono font-bold text-[#3D1164]">
+                                    {method.config.account_number}
+                                  </span>
+                                )}
+                              </p>
                             </div>
                           </div>
-                        );
-                      })}
+
+                          <div className="flex items-center justify-end gap-3">
+                            <label className="relative inline-flex cursor-pointer items-center">
+                              <input
+                                type="checkbox"
+                                checked={method.enabled}
+                                onChange={() => handleToggleMethod(method.id)}
+                                className="peer sr-only"
+                              />
+                              <div className="peer h-6 w-11 rounded-full border border-slate-300 bg-slate-200 transition-all after:absolute after:top-[2px] after:left-[2px] after:h-5 after:after:w-5 after:rounded-full after:bg-white after:shadow-xs after:transition-all peer-checked:bg-[#FF7A00] peer-checked:after:translate-x-full" />
+                            </label>
+
+                            <button
+                              onClick={() => handleEditClick(method)}
+                              className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100 shadow-xs"
+                            >
+                              <Edit3 className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteMethod(method.id)}
+                              className="rounded-xl border border-slate-200 bg-white p-2 text-rose-600 hover:bg-rose-50 shadow-xs"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>
             )}
 
-            {/* ─── Blocked Dates ─── */}
+            {/* Blocked Dates */}
             {isAdmin && (
-              <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
-                <h2 className="mb-2 flex items-center gap-2 font-display text-base font-bold text-cream sm:text-lg">
-                  <CalendarOff className="h-5 w-5 text-primary-300" />
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
+                <h2 className="mb-2 flex items-center gap-2 font-display text-base font-bold text-slate-900 sm:text-lg">
+                  <CalendarOff className="h-5 w-5 text-[#3D1164]" />
                   Blocked Dates & Maintenance
                 </h2>
-
-                <p className="mb-4 text-xs text-cream-muted sm:text-sm">
-                  Block specific courts for private tournaments, holidays, or maintenance
+                <p className="mb-4 text-xs text-slate-500 sm:text-sm">
+                  Block courts for tournaments, private reservations, or surface maintenance
                 </p>
 
                 <div className="mb-4">
-                  <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-cream-muted">
-                    Filter By Court
-                  </label>
                   <div className="flex flex-wrap gap-2">
                     {courts.map((court) => {
                       if (!court) return null;
@@ -1368,10 +1229,10 @@ export function Settings() {
                             setSelectedCourtId(court.id);
                             loadBlockedDates(court.id);
                           }}
-                          className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                          className={`flex items-center gap-1.5 rounded-2xl border px-3.5 py-2 text-xs font-bold transition shadow-xs ${
                             isSelected
-                              ? 'border-primary-400 bg-primary-500 text-white shadow-glow-blue'
-                              : 'border-neutral-700 bg-neutral-950/70 text-cream-muted hover:border-primary-400/50 hover:text-cream'
+                              ? 'border-[#3D1164] bg-[#3D1164] text-white'
+                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                           }`}
                         >
                           <Building2 className="h-3.5 w-3.5" />
@@ -1390,9 +1251,8 @@ export function Settings() {
                     value={blockDate}
                     onChange={(e) => setBlockDate(e.target.value)}
                   />
-
                   <div className="flex items-end">
-                    <label className="flex w-full items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-950/70 px-3.5 py-2.5 text-xs font-semibold text-cream cursor-pointer">
+                    <label className="flex w-full items-center gap-2 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-800 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={isFullDay}
@@ -1400,7 +1260,7 @@ export function Settings() {
                           setIsFullDay(e.target.checked);
                           if (e.target.checked) setSelectedSlotIds([]);
                         }}
-                        className="h-4 w-4 rounded border-neutral-600 bg-neutral-950 accent-primary-500 cursor-pointer"
+                        className="h-4 w-4 rounded border-slate-300 accent-[#3D1164] cursor-pointer"
                       />
                       <span>Full Day Block</span>
                     </label>
@@ -1409,114 +1269,93 @@ export function Settings() {
 
                 {!isFullDay && (
                   <div className="mb-5">
-                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-cream-muted">
-                      Select Time Slots
+                    <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Select Time Slots to Block
                     </label>
                     {renderSlotGrid()}
                   </div>
                 )}
 
-                <div className="mb-6">
+                <div className="mb-5">
                   <Input
                     label="Reason"
-                    placeholder="e.g. Tournament, Resurfacing"
+                    placeholder="e.g. Tournament, Maintenance"
                     value={blockReason}
                     onChange={(e) => setBlockReason(e.target.value)}
                   />
                 </div>
 
-                <div className="mb-6">
-                  <Button
-                    leftIcon={<Plus className="h-4 w-4" />}
-                    onClick={handleAddBlock}
-                    disabled={!blockDate || !selectedCourtId}
-                  >
-                    Block Date
-                  </Button>
-                </div>
+                <Button
+                  leftIcon={<Plus className="h-4 w-4" />}
+                  onClick={handleAddBlock}
+                  disabled={!blockDate || !selectedCourtId}
+                  className="bg-[#3D1164] hover:bg-[#5A1B91] text-white font-bold"
+                >
+                  Block Date
+                </Button>
 
-                <div className="space-y-2.5 border-t border-neutral-700 pt-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-primary-300">
+                <div className="mt-6 space-y-2.5 border-t border-slate-100 pt-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#3D1164]">
                     {selectedCourt ? `${selectedCourt.name} — ` : ''}Active Blocks
                   </p>
 
                   {filteredBlocked.length === 0 ? (
-                    <div className="rounded-xl border border-neutral-700 bg-neutral-950/40 py-6 text-center">
-                      <CalendarOff className="mx-auto h-8 w-8 text-cream-muted/30" />
-                      <p className="mt-2 text-xs font-semibold text-cream-muted">
-                        No blocked dates scheduled for this court.
-                      </p>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 py-6 text-center text-xs text-slate-400">
+                      No blocked dates scheduled for this court.
                     </div>
                   ) : (
-                    <AnimatePresence>
-                      {filteredBlocked.map((block) => (
-                        <motion.div
-                          key={block.id}
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, x: 10 }}
-                          className="flex items-center justify-between gap-3 rounded-xl border border-neutral-700 bg-neutral-950/70 p-3.5"
+                    filteredBlocked.map((block) => (
+                      <div
+                        key={block.id}
+                        className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                      >
+                        <div>
+                          <p className="text-sm font-bold text-slate-900">
+                            {formatDateLong(block.date)}
+                          </p>
+                          <p className="text-xs text-slate-500">{block.reason}</p>
+                        </div>
+                        <button
+                          onClick={() => removeBlockedDate(block.id)}
+                          className="rounded-xl border border-slate-200 bg-white p-2 text-rose-600 hover:bg-rose-50 shadow-xs"
                         >
-                          <div className="min-w-0">
-                            <p className="text-sm font-bold text-cream">
-                              {formatDateLong(block.date)}
-                              {(block as any).startTime && (block as any).endTime && (
-                                <span className="ml-2 font-mono text-xs font-semibold text-primary-300">
-                                  {(block as any).startTime} – {(block as any).endTime}
-                                </span>
-                              )}
-                            </p>
-                            <p className="truncate text-xs text-cream-muted mt-0.5">
-                              {block.reason}
-                            </p>
-                          </div>
-
-                          <button
-                            onClick={() => removeBlockedDate(block.id)}
-                            className="rounded-lg border border-neutral-600 bg-neutral-800/60 p-2 text-cream-muted transition hover:border-error hover:text-error active:scale-95"
-                            title="Remove block"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))
                   )}
                 </div>
               </div>
             )}
 
-            {/* ─── Staff Management ─── */}
+            {/* Staff Management */}
             {isAdmin && <StaffManagement />}
 
-            {/* ─── App Info ─── */}
-            <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
-              <h2 className="mb-4 font-display text-base font-bold text-cream sm:text-lg">
+            {/* System Info */}
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
+              <h2 className="mb-4 font-display text-base font-bold text-slate-900 sm:text-lg">
                 System Information
               </h2>
-
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-cream-muted">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                     Platform
                   </p>
-                  <p className="mt-1 text-sm font-bold text-cream">{APP_CONFIG.name}</p>
+                  <p className="mt-1 text-sm font-bold text-slate-900">{APP_CONFIG.fullName}</p>
                 </div>
-
-                <div className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-cream-muted">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                     Established
                   </p>
-                  <p className="mt-1 text-sm font-bold text-cream">
+                  <p className="mt-1 text-sm font-bold text-slate-900">
                     Est. {APP_CONFIG.established}
                   </p>
                 </div>
-
-                <div className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-cream-muted">
-                    Built By
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Developer
                   </p>
-                  <p className="mt-1 text-sm font-bold text-cream">
+                  <p className="mt-1 text-sm font-bold text-[#FF7A00]">
                     {APP_CONFIG.developer}
                   </p>
                 </div>
@@ -1526,7 +1365,7 @@ export function Settings() {
         )}
       </div>
 
-      {/* ─── Add/Edit Payment Method Modal ─── */}
+      {/* Add / Edit Method Modal */}
       <Modal
         isOpen={showAddModal || !!editingMethod}
         onClose={() => {
@@ -1540,14 +1379,14 @@ export function Settings() {
         <div className="space-y-4">
           <Input
             label="Payment Method Name"
-            placeholder="e.g. GCash, Maya, BPI Online, QR Ph"
+            placeholder="e.g. GCash, Maya, BPI QR Ph"
             value={formData.name || ''}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
 
           <div className="grid gap-3.5 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-cream-muted">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                 Payment Type
               </label>
               <select
@@ -1555,10 +1394,10 @@ export function Settings() {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value as PaymentMethod['type'] })
                 }
-                className="w-full rounded-xl border border-neutral-700 bg-neutral-950/70 px-3.5 py-2.5 text-sm text-cream transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-2xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:border-[#3D1164]"
               >
                 {PAYMENT_TYPE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value} className="bg-neutral-900">
+                  <option key={opt.value} value={opt.value}>
                     {opt.icon} {opt.label}
                   </option>
                 ))}
@@ -1566,16 +1405,16 @@ export function Settings() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-cream-muted">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                 Display Icon
               </label>
               <select
                 value={formData.icon || 'Smartphone'}
                 onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                className="w-full rounded-xl border border-neutral-700 bg-neutral-950/70 px-3.5 py-2.5 text-sm text-cream transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-2xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:border-[#3D1164]"
               >
                 {ICON_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value} className="bg-neutral-900">
+                  <option key={opt.value} value={opt.value}>
                     {opt.value}
                   </option>
                 ))}
@@ -1583,14 +1422,14 @@ export function Settings() {
             </div>
           </div>
 
-          <div className="border-t border-neutral-700 pt-4 space-y-3.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-primary-300">
-              Account Credentials
+          <div className="border-t border-slate-100 pt-4 space-y-3.5">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#3D1164]">
+              Account Details
             </p>
 
             <Input
               label="Account Holder Name"
-              placeholder="e.g. Smash Point Pickle Sports Center"
+              placeholder="e.g. Smash Zone by Jerjen"
               value={formData.config?.account_name || ''}
               onChange={(e) =>
                 setFormData({
@@ -1616,23 +1455,23 @@ export function Settings() {
 
             {(formData.type === 'qr_ph' || formData.type === 'gcash') && (
               <div className="space-y-2">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
                   QR Code Image
                   {uploadingQR && (
-                    <Loader2 className="ml-2 inline h-4 w-4 animate-spin text-primary-300" />
+                    <Loader2 className="ml-2 inline h-4 w-4 animate-spin text-[#FF7A00]" />
                   )}
                 </label>
 
                 {formData.config?.qr_image_url ? (
-                  <div className="rounded-xl border border-neutral-700 bg-neutral-950/80 p-4">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div className="flex flex-col items-center gap-3 sm:flex-row">
                       <img
                         src={formData.config.qr_image_url}
                         alt="QR Code"
-                        className="h-24 w-24 rounded-lg border border-neutral-700 object-contain bg-white p-1"
+                        className="h-24 w-24 rounded-xl border border-slate-200 object-contain bg-white p-1 shadow-xs"
                       />
-                      <div className="min-w-0 text-center sm:text-left">
-                        <p className="text-xs font-bold text-accent-300">QR Code Linked ✓</p>
+                      <div>
+                        <p className="text-xs font-bold text-emerald-700">QR Code Linked ✓</p>
                         <button
                           type="button"
                           onClick={() =>
@@ -1641,21 +1480,18 @@ export function Settings() {
                               config: { ...formData.config, qr_image_url: '' },
                             })
                           }
-                          className="mt-2 text-xs font-medium text-error hover:underline"
+                          className="mt-1 text-xs font-bold text-rose-600 underline"
                         >
-                          Remove QR Image
+                          Remove QR
                         </button>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-xl border-2 border-dashed border-neutral-700 bg-neutral-950/40 p-5 text-center transition hover:border-primary-400/50">
-                    <ImageIcon className="mx-auto h-8 w-8 text-cream-muted/40" />
-                    <p className="mt-2 text-xs text-cream-muted">
-                      Upload QR code for instant client scans
-                    </p>
+                  <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-5 text-center">
+                    <ImageIcon className="mx-auto h-8 w-8 text-slate-400" />
                     <label className="mt-3 inline-block cursor-pointer">
-                      <span className="rounded-xl border border-primary-400/40 bg-primary-500/20 px-3.5 py-1.5 text-xs font-semibold text-primary-300 transition hover:bg-primary-500 hover:text-white">
+                      <span className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-800 shadow-xs hover:bg-slate-50">
                         {uploadingQR ? 'Uploading...' : 'Choose QR Image'}
                       </span>
                       <input
@@ -1678,7 +1514,7 @@ export function Settings() {
             <Textarea
               label="Checkout Instructions (optional)"
               rows={2}
-              placeholder="e.g. Please put your name or booking reference in the notes..."
+              placeholder="e.g. Include your booking reference code in the transaction notes..."
               value={formData.config?.instructions || ''}
               onChange={(e) =>
                 setFormData({
@@ -1689,60 +1525,30 @@ export function Settings() {
             />
           </div>
 
-          <div className="pt-1">
-            <label className="flex items-center gap-2 text-xs font-semibold text-cream cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.enabled !== undefined ? formData.enabled : true}
-                onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
-                className="h-4 w-4 rounded border-neutral-600 bg-neutral-950 accent-primary-500 cursor-pointer"
-              />
-              Active (Visible during client checkout)
-            </label>
-          </div>
-
-          {methodMsg && (
-            <div
-              className={`flex items-center gap-2 rounded-xl border p-3 text-xs font-semibold ${
-                methodMsg.type === 'success'
-                  ? 'border-accent-400/40 bg-accent-500/15 text-accent-300'
-                  : 'border-error/40 bg-error/15 text-error'
-              }`}
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 pt-3">
+            <Button
+              size="md"
+              fullWidth
+              isLoading={savingMethod}
+              leftIcon={<Save className="h-4 w-4" />}
+              onClick={editingMethod ? handleEditMethod : handleAddMethod}
+              className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
             >
-              {methodMsg.type === 'success' ? (
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-              ) : (
-                <AlertCircle className="h-4 w-4 shrink-0" />
-              )}
-              {methodMsg.text}
-            </div>
-          )}
-
-          <div className="sticky bottom-0 -mx-4 -mb-4 mt-5 border-t border-neutral-700 bg-neutral-900/95 p-4 backdrop-blur-sm sm:static sm:mx-0 sm:mb-0 sm:bg-transparent sm:p-0 sm:pt-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-              <Button
-                size="md"
-                fullWidth
-                isLoading={savingMethod}
-                leftIcon={<Save className="h-4 w-4" />}
-                onClick={editingMethod ? handleEditMethod : handleAddMethod}
-              >
-                {editingMethod ? 'Save Changes' : 'Add Payment Method'}
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                fullWidth
-                className="sm:w-auto"
-                onClick={() => {
-                  setShowAddModal(false);
-                  setEditingMethod(null);
-                  resetForm();
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
+              {editingMethod ? 'Save Changes' : 'Add Payment Method'}
+            </Button>
+            <Button
+              size="md"
+              variant="ghost"
+              fullWidth
+              className="sm:w-auto"
+              onClick={() => {
+                setShowAddModal(false);
+                setEditingMethod(null);
+                resetForm();
+              }}
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       </Modal>

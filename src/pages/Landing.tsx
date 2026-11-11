@@ -40,42 +40,43 @@ import type { TimeSlot, Court, OpenPlaySession, Booking } from '@/types';
 
 const EMPTY_AMENITIES: AmenityItem[] = [];
 
+// Crisp light-theme accents matching the purple & orange logo
 const COURT_ACCENTS = [
   {
-    header: 'text-[#ED1C24]',
-    dot: 'bg-[#ED1C24]',
-    border: 'border-[#ED1C24]',
-    bg: 'bg-[#2A0B0D]',
-    text: 'text-white',
-    hoverBorder: 'hover:border-[#FF3B41]',
-    hoverBg: 'hover:bg-[#3D1114]',
+    header: 'text-[#3D1164]',
+    dot: 'bg-[#3D1164]',
+    border: 'border-purple-200',
+    bg: 'bg-purple-50/70',
+    text: 'text-[#3D1164]',
+    hoverBorder: 'hover:border-[#3D1164]',
+    hoverBg: 'hover:bg-purple-100/80',
   },
   {
-    header: 'text-[#FFB703]',
-    dot: 'bg-[#FFB703]',
-    border: 'border-[#FFB703]',
-    bg: 'bg-[#2A1F0B]',
-    text: 'text-white',
-    hoverBorder: 'hover:border-[#FFC533]',
-    hoverBg: 'hover:bg-[#3D2D11]',
+    header: 'text-[#FF7A00]',
+    dot: 'bg-[#FF7A00]',
+    border: 'border-orange-200',
+    bg: 'bg-orange-50/70',
+    text: 'text-[#FF7A00]',
+    hoverBorder: 'hover:border-[#FF7A00]',
+    hoverBg: 'hover:bg-orange-100/80',
   },
   {
-    header: 'text-[#ED1C24]',
-    dot: 'bg-[#ED1C24]',
-    border: 'border-[#ED1C24]',
-    bg: 'bg-[#2A0B0D]',
-    text: 'text-white',
-    hoverBorder: 'hover:border-[#FF3B41]',
-    hoverBg: 'hover:bg-[#3D1114]',
+    header: 'text-[#FFA81A]',
+    dot: 'bg-[#FFA81A]',
+    border: 'border-amber-200',
+    bg: 'bg-amber-50/70',
+    text: 'text-amber-800',
+    hoverBorder: 'hover:border-[#FFA81A]',
+    hoverBg: 'hover:bg-amber-100/80',
   },
   {
-    header: 'text-[#FFB703]',
-    dot: 'bg-[#FFB703]',
-    border: 'border-[#FFB703]',
-    bg: 'bg-[#2A1F0B]',
-    text: 'text-white',
-    hoverBorder: 'hover:border-[#FFC533]',
-    hoverBg: 'hover:bg-[#3D2D11]',
+    header: 'text-[#3D1164]',
+    dot: 'bg-[#3D1164]',
+    border: 'border-purple-200',
+    bg: 'bg-purple-50/70',
+    text: 'text-[#3D1164]',
+    hoverBorder: 'hover:border-[#3D1164]',
+    hoverBg: 'hover:bg-purple-100/80',
   },
 ];
 
@@ -150,10 +151,10 @@ function isSlotPast(slotStartTime: string, isViewingToday: boolean): boolean {
 }
 
 const SKILL_BADGE: Record<string, string> = {
-  Beginner: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30',
-  Intermediate: 'bg-sky-500/20 text-sky-300 border border-sky-500/40',
-  Advanced: 'bg-purple-500/20 text-purple-300 border border-purple-500/40',
-  'All Levels': 'bg-blue-500/20 text-blue-200 border border-blue-500/30',
+  Beginner: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  Intermediate: 'bg-orange-50 text-[#FF7A00] border border-orange-200',
+  Advanced: 'bg-purple-50 text-[#3D1164] border border-purple-200',
+  'All Levels': 'bg-blue-50 text-blue-700 border border-blue-200',
 };
 
 export function Landing() {
@@ -213,7 +214,7 @@ export function Landing() {
       const hour12 = hour % 12 || 12;
       return minute === 0 ? `${hour12}${ampm}` : `${hour12}:${String(minute).padStart(2, '0')}${ampm}`;
     };
-    return `${formatTime(earliestOpen)} - ${formatTime(latestClose)}`;
+    return `${formatTime(earliestOpen)} – ${formatTime(latestClose)}`;
   };
 
   const isNextWeekDisabled = (() => {
@@ -421,7 +422,7 @@ export function Landing() {
   const showPendingBanner = !!pendingBooking && !bannerDismissed;
 
   return (
-    <div className="min-h-screen bg-charcoal text-cream">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
       {showPendingBanner && pendingBooking && (
@@ -430,17 +431,17 @@ export function Landing() {
             <motion.div
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-500/50 bg-amber-950/95 p-3 shadow-2xl backdrop-blur-md sm:gap-4 sm:p-4"
+              className="flex flex-wrap items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-3 shadow-lg sm:gap-4 sm:p-4"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-500/40 bg-amber-500/20 text-amber-300">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white">
                 <AlertCircle className="h-5 w-5" />
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-amber-200">
+                <p className="text-sm font-bold text-amber-950">
                   You have an unpaid booking
                 </p>
-                <p className="mt-0.5 text-xs text-cream-muted">
+                <p className="mt-0.5 text-xs text-amber-800">
                   {pendingBooking.court_name} ·{' '}
                   {formatDateLong(pendingBooking.date)} ·{' '}
                   {formatCurrency(pendingBooking.total_amount)}
@@ -452,13 +453,14 @@ export function Landing() {
                   size="sm"
                   onClick={() => navigate('/checkout')}
                   rightIcon={<ArrowRight className="h-3.5 w-3.5" />}
+                  className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
                 >
                   Pay now
                 </Button>
                 <button
                   onClick={dismissBanner}
                   aria-label="Dismiss"
-                  className="rounded-lg border border-neutral-700 bg-neutral-900/80 p-2 text-cream-muted transition hover:border-amber-500/50 hover:text-amber-300"
+                  className="rounded-lg border border-amber-200 bg-white p-2 text-amber-800 hover:bg-amber-100"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -469,28 +471,23 @@ export function Landing() {
       )}
 
       {/* Hero Section */}
-      <section className="relative flex min-h-[85vh] items-start pt-28 sm:min-h-screen sm:items-center sm:pt-20 overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://plus.unsplash.com/premium_photo-1709048991125-7d01a4666f79?q=80&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover object-right md:object-[75%_center] scale-x-[-1]"
-            aria-hidden
-            referrerPolicy="no-referrer"
-          />
-
+      <section className="relative flex min-h-[85vh] items-start pt-28 sm:min-h-screen sm:items-center sm:pt-20 overflow-hidden bg-white border-b border-slate-200">
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          {/* Primary background image with clean fade */}
           <img
             src="/images/bg.jpg"
-            alt="Smash Point"
-            className="absolute inset-0 h-full w-full object-cover object-right md:object-[75%_center]"
+            alt="Smash Zone by Jerjen"
+            className="absolute inset-0 h-full w-full object-cover object-right md:object-[75%_center] opacity-15"
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
+              // Fallback to Unsplash premium photo if bg.jpg fails or is missing
+              (e.currentTarget as HTMLImageElement).src =
+                'https://plus.unsplash.com/premium_photo-1709048991125-7d01a4666f79?q=80&w=2400&auto=format&fit=crop&ixlib=rb-4.1.0';
             }}
           />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/95 sm:via-neutral-950/85 to-neutral-950/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-grid opacity-20" />
+          {/* Clean White Light Gradients to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 sm:via-white/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
         </div>
 
         <div className="container-page relative z-10 py-8 sm:py-20">
@@ -506,14 +503,14 @@ export function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15, duration: 0.5 }}
                 onClick={() => navigate('/open-play')}
-                className="mb-4 flex w-full items-center gap-2 rounded-full border border-sky-400/40 bg-sky-950/60 px-3 py-2 backdrop-blur-md transition hover:border-sky-300 hover:bg-sky-900/50 sm:mb-5 sm:w-auto sm:px-4 shadow-sm"
+                className="mb-4 flex w-full items-center gap-2 rounded-full border border-purple-200 bg-purple-50/80 px-3.5 py-2 transition hover:bg-purple-100 sm:mb-5 sm:w-auto shadow-xs"
               >
                 <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-300"></span>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]"></span>
                 </span>
-                <Users className="h-4 w-4 shrink-0 text-sky-300" />
-                <span className="truncate text-xs font-semibold text-sky-100 sm:text-sm">
+                <Users className="h-4 w-4 shrink-0 text-[#3D1164]" />
+                <span className="truncate text-xs font-bold text-[#3D1164] sm:text-sm">
                   Open Play{' '}
                   {nextSession.status === 'active'
                     ? 'happening now'
@@ -522,25 +519,29 @@ export function Landing() {
                       : 'soon'}{' '}
                   · {nextSession.current_players}/{nextSession.max_players} joined
                 </span>
-                <ArrowRight className="h-4 w-4 shrink-0 text-sky-300" />
+                <ArrowRight className="h-4 w-4 shrink-0 text-[#3D1164]" />
               </motion.button>
             )}
 
-            {/* Hero Gradient Title */}
-            <h1 className="text-4xl font-black leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl">
-              Smash{' '}
-              <span className="bg-gradient-to-r from-rose-500 via-orange-400 to-amber-400 bg-clip-text text-transparent">
-                Point
-              </span>
+            {/* Sub-badge */}
+            <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#FF7A00]">
+              <Sparkles className="h-3.5 w-3.5" />
+              Recreational Hub by Jerjen
+            </div>
+
+            {/* Hero Title */}
+            <h1 className="text-4xl font-black leading-[1.05] tracking-tight uppercase italic sm:text-6xl lg:text-7xl">
+              <span className="text-[#3D1164]">Smash</span>{' '}
+              <span className="text-[#FF7A00]">Zone</span>
             </h1>
 
-            <p className="mt-3 text-xl font-medium text-cream-dark sm:mt-4 sm:text-3xl">
+            <p className="mt-3 text-xl font-bold text-slate-800 sm:mt-4 sm:text-3xl">
               {APP_CONFIG.tagline}
             </p>
 
-            <p className="mt-4 max-w-lg text-sm leading-relaxed text-cream-muted sm:mt-6 sm:text-lg">
-              Book premium pickleball courts at Smash Point Pickle Sports Center in Tandag City.
-              Beginner-friendly, tournament-ready, and made for everyone who loves the game.
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-600 sm:mt-5 sm:text-base">
+              Book premium pickleball courts at Smash Zone by Jerjen in Tandag City.
+              Beginner-friendly, tournament-ready, and built for everyone who loves the game.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row">
@@ -549,6 +550,7 @@ export function Landing() {
                 onClick={scrollToBooking}
                 leftIcon={<CalendarPlus className="h-5 w-5" />}
                 disabled={!bookingsEnabled}
+                className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-black shadow-md"
               >
                 {bookingsEnabled ? 'Book a Court' : 'Bookings Closed'}
               </Button>
@@ -557,18 +559,19 @@ export function Landing() {
                 variant="secondary"
                 to="/track"
                 leftIcon={<CalendarDays className="h-5 w-5" />}
+                className="bg-white border-slate-300 text-slate-800 hover:bg-slate-50"
               >
                 Track My Booking
               </Button>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-cream-muted sm:mt-10 sm:gap-6 sm:text-sm">
+            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-600 sm:mt-10 sm:gap-6 sm:text-sm">
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-accent-400" />
+                <MapPin className="h-4 w-4 text-[#FF7A00]" />
                 <span>National Highway, Rosario, Tandag City</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-accent-400" />
+                <Clock className="h-4 w-4 text-[#FFA81A]" />
                 <span>Open {getOperatingHours()}</span>
               </div>
             </div>
@@ -578,18 +581,18 @@ export function Landing() {
 
       {/* Open Play This Week Section */}
       {weekSessions.length > 0 && (
-        <section className="relative border-b border-neutral-800 bg-neutral-900 py-10 sm:py-14">
+        <section className="relative border-b border-slate-200 bg-slate-100/60 py-10 sm:py-14">
           <div className="container-page">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3 sm:mb-6">
               <div>
-                <span className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-sky-400/30 bg-sky-950/60 px-3 py-1 text-xs font-semibold text-sky-200">
-                  <Users className="h-3.5 w-3.5 text-sky-300" />
+                <span className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-bold text-[#3D1164]">
+                  <Users className="h-3.5 w-3.5 text-[#3D1164]" />
                   Open Play
                 </span>
-                <h2 className="text-xl font-bold tracking-tight text-cream sm:text-2xl md:text-3xl">
+                <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
                   Join a Session This Week
                 </h2>
-                <p className="text-xs text-cream-muted sm:text-sm">
+                <p className="text-xs text-slate-600 sm:text-sm">
                   Meet other players and split the court — spots fill fast
                 </p>
               </div>
@@ -598,6 +601,7 @@ export function Landing() {
                 variant="secondary"
                 onClick={() => navigate('/open-play')}
                 rightIcon={<ArrowRight className="h-4 w-4" />}
+                className="bg-white border-slate-300 text-slate-800"
               >
                 See all
               </Button>
@@ -619,9 +623,9 @@ export function Landing() {
                     transition={{ delay: i * 0.05 }}
                     className="w-[280px] shrink-0 sm:w-auto"
                   >
-                    <div className="card flex h-full flex-col p-4">
+                    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition">
                       <div className="mb-2 flex items-center justify-between gap-2">
-                        <span className="inline-flex items-center rounded-full border border-sky-400/30 bg-sky-950/50 px-2.5 py-0.5 text-xs font-bold text-sky-200">
+                        <span className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-xs font-bold text-[#FF7A00]">
                           {isToday
                             ? 'TODAY'
                             : formatDateLong(session.date).split(',')[0].toUpperCase()}
@@ -635,23 +639,23 @@ export function Landing() {
                         </span>
                       </div>
 
-                      <h3 className="truncate font-display text-base font-bold text-cream">
+                      <h3 className="truncate font-display text-base font-bold text-slate-900">
                         {session.title || session.host_name || session.court_name}
                       </h3>
 
-                      <div className="mt-2 space-y-1.5 text-xs text-cream-muted">
+                      <div className="mt-2 space-y-1.5 text-xs text-slate-600">
                         <div className="flex items-center gap-2">
-                          <Clock className="h-3.5 w-3.5 text-sky-300" />
+                          <Clock className="h-3.5 w-3.5 text-slate-400" />
                           {formatTimeRangeShort(session.start_time, session.end_time)}
                         </div>
                         <div className="flex items-center gap-2">
-                          <Users className="h-3.5 w-3.5 text-sky-300" />
+                          <Users className="h-3.5 w-3.5 text-slate-400" />
                           {session.current_players}/{session.max_players} · {spotsLeft}{' '}
                           spot{spotsLeft === 1 ? '' : 's'} left
                         </div>
                         {session.host_name && (
                           <div className="flex items-center gap-2">
-                            <UserCircle2 className="h-3.5 w-3.5 text-sky-300" />
+                            <UserCircle2 className="h-3.5 w-3.5 text-slate-400" />
                             <span className="truncate">Hosted by {session.host_name}</span>
                           </div>
                         )}
@@ -660,7 +664,7 @@ export function Landing() {
                             {session.courts.map((c) => (
                               <span
                                 key={c.id}
-                                className="rounded border border-neutral-700 bg-neutral-800 px-1.5 py-0.5 text-[10px] text-cream-muted"
+                                className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-600"
                               >
                                 {c.name}
                               </span>
@@ -669,10 +673,10 @@ export function Landing() {
                         )}
                       </div>
 
-                      <div className="mt-4 flex items-center justify-between border-t border-neutral-800 pt-3">
+                      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-cream-muted">Per player</p>
-                          <p className="font-display text-base font-bold text-accent-400 sm:text-lg">
+                          <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Per player</p>
+                          <p className="font-display text-base font-bold text-[#FF7A00] sm:text-lg">
                             {formatCurrency(session.price_per_player)}
                           </p>
                         </div>
@@ -681,6 +685,7 @@ export function Landing() {
                           disabled={isFull}
                           onClick={() => handleOpenPlayClick(session)}
                           rightIcon={<ArrowRight className="h-4 w-4" />}
+                          className={!isFull ? 'bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold' : ''}
                         >
                           {isFull ? 'Full' : 'Join'}
                         </Button>
@@ -696,12 +701,12 @@ export function Landing() {
 
       {/* Bookings Closed Banner */}
       {!bookingsEnabled && (
-        <section className="border-y border-amber-500/40 bg-amber-950/40 py-4">
-          <div className="container-page flex items-start gap-3 text-amber-200">
-            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
+        <section className="border-y border-amber-300 bg-amber-50 py-4">
+          <div className="container-page flex items-start gap-3 text-amber-900">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
             <div>
               <p className="text-sm font-bold">Online bookings are temporarily closed</p>
-              <p className="mt-0.5 text-xs text-amber-200/80">
+              <p className="mt-0.5 text-xs text-amber-700">
                 Please check back soon or contact the venue directly. Existing bookings are unaffected.
               </p>
             </div>
@@ -711,22 +716,22 @@ export function Landing() {
 
       {/* Booking Section */}
       <div ref={bookingSectionRef}>
-        <section className="relative z-20 border-y border-neutral-800 bg-neutral-950 py-8 md:py-16">
+        <section className="relative z-20 py-8 md:py-16">
           <div className="container-page max-w-7xl">
-            <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900 shadow-2xl md:rounded-3xl">
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
 
               {/* Booking Section Header */}
-              <div className="border-b border-neutral-800 bg-neutral-950/70 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
+              <div className="border-b border-slate-200 bg-slate-50/70 px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-bold tracking-tight text-cream sm:text-2xl md:text-3xl">
-                      Book a <span className="bg-gradient-to-r from-rose-500 to-amber-400 bg-clip-text text-transparent">Court</span>
+                    <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
+                      Book a <span className="text-[#FF7A00]">Court</span>
                     </h2>
-                    <p className="mt-0.5 text-xs text-cream-muted sm:text-sm">
+                    <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
                       {BOOKING_COPY.bookingInstructions}
                     </p>
                   </div>
-                  <div className="hidden rounded-xl border border-neutral-800 bg-neutral-900 p-2.5 text-neutral-300 sm:block md:p-3">
+                  <div className="hidden rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-xs sm:block md:p-3">
                     <CalendarDays className="h-5 w-5 md:h-6 md:w-6" />
                   </div>
                 </div>
@@ -734,34 +739,32 @@ export function Landing() {
 
               <div className="p-4 pb-24 sm:p-6 sm:pb-24 md:p-8 md:pb-8">
                 {!bookingsEnabled ? (
-                  <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-8 text-center">
-                    <AlertCircle className="mx-auto h-10 w-10 text-amber-400" />
-                    <p className="mt-3 text-sm font-semibold text-cream">
+                  <div className="rounded-2xl border border-amber-300 bg-amber-50 p-8 text-center">
+                    <AlertCircle className="mx-auto h-10 w-10 text-amber-600" />
+                    <p className="mt-3 text-sm font-semibold text-amber-950">
                       Online bookings are temporarily closed
                     </p>
-                    <p className="mt-1 text-xs text-cream-muted">
+                    <p className="mt-1 text-xs text-amber-700">
                       Please check back soon, or contact the venue directly to book.
                     </p>
                   </div>
                 ) : (
                   <>
-                    {/* ─── REDESIGNED DATE PICKER ─── */}
-                    <div className="mb-6 rounded-2xl border border-neutral-800 bg-neutral-950/60 p-3 sm:p-5 md:mb-8 shadow-inner">
-                      {/* Date Header Strip */}
-                      <div className="mb-3 flex items-center justify-between gap-2 border-b border-neutral-800/80 pb-3">
+                    {/* Date Picker Header */}
+                    <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-5 md:mb-8">
+                      <div className="mb-3 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shrink-0">
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF7A00] text-[10px] font-black text-white shrink-0">
                             1
                           </span>
-                          <span className="text-xs sm:text-sm font-bold text-cream truncate">
+                          <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">
                             {formatDateLong(selectedDate)}
                           </span>
                         </div>
 
-                        {/* Controls (Jump to Calendar + Prev/Next Week) */}
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <div className="relative flex h-8 items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-800/80 px-2.5 text-xs font-semibold text-cream transition hover:border-neutral-500">
-                            <CalendarDays className="h-3.5 w-3.5 text-rose-400" />
+                          <div className="relative flex h-8 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-semibold text-slate-800 shadow-xs hover:border-slate-400">
+                            <CalendarDays className="h-3.5 w-3.5 text-[#FF7A00]" />
                             <span className="hidden sm:inline">Pick Date</span>
                             <input
                               type="date"
@@ -770,14 +773,14 @@ export function Landing() {
                               max={maxSelectableDate ?? undefined}
                               onChange={handleCalendarPick}
                               aria-label="Pick a date from calendar"
-                              className="absolute inset-0 h-full w-full cursor-pointer opacity-0 [color-scheme:dark]"
+                              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                             />
                           </div>
 
                           <button
                             onClick={() => setWeekOffset((w) => Math.max(0, w - 1))}
                             disabled={weekOffset === 0}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-800 text-cream-muted transition hover:text-white disabled:opacity-30 active:scale-95"
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 active:scale-95 shadow-xs"
                             aria-label="Previous week"
                           >
                             <ChevronLeft className="h-4 w-4" />
@@ -785,7 +788,7 @@ export function Landing() {
                           <button
                             onClick={() => setWeekOffset((w) => w + 1)}
                             disabled={isNextWeekDisabled}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-800 text-cream-muted transition hover:text-white disabled:opacity-30 active:scale-95"
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 active:scale-95 shadow-xs"
                             aria-label="Next week"
                           >
                             <ChevronRight className="h-4 w-4" />
@@ -793,7 +796,7 @@ export function Landing() {
                         </div>
                       </div>
 
-                      {/* Horizontal 7-Day Ribbon */}
+                      {/* 7-Day Ribbon */}
                       <div className="no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1 sm:mx-0 sm:grid sm:grid-cols-7 sm:gap-2">
                         {weekDays.map((day) => {
                           const iso = toISODate(day);
@@ -815,40 +818,40 @@ export function Landing() {
                               title={beyondLimit ? `Bookings open up to ${maxAdvanceDays} days ahead` : undefined}
                               className={`group relative flex min-w-[54px] flex-1 shrink-0 snap-start flex-col items-center justify-center rounded-xl py-2 transition-all sm:min-w-0 ${
                                 beyondLimit
-                                  ? 'cursor-not-allowed border border-neutral-800/40 bg-neutral-900/40 opacity-40 text-neutral-600'
+                                  ? 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400 opacity-50'
                                   : isSelected
-                                    ? 'border border-rose-500 bg-rose-600 text-white font-bold shadow-[0_0_16px_rgba(244,63,94,0.35)]'
-                                    : 'border border-neutral-800 bg-neutral-900 text-cream-muted hover:border-neutral-700 hover:bg-neutral-850 hover:text-white'
+                                    ? 'border-transparent bg-[#3D1164] text-white font-bold shadow-md'
+                                    : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 shadow-xs'
                               }`}
                             >
                               {isToday && (
                                 <span
                                   className={`mb-0.5 rounded-full px-1.5 py-[1px] text-[8px] font-black uppercase tracking-wider ${
                                     isSelected
-                                      ? 'bg-black text-rose-300'
-                                      : 'bg-rose-500/20 text-rose-400'
+                                      ? 'bg-[#FF7A00] text-white'
+                                      : 'bg-orange-100 text-[#FF7A00]'
                                   }`}
                                 >
                                   TODAY
                                 </span>
                               )}
 
-                              <span className={`text-[10px] font-semibold uppercase ${isSelected ? 'text-white' : 'text-cream-muted'}`}>
+                              <span className={`text-[10px] font-semibold uppercase ${isSelected ? 'text-purple-200' : 'text-slate-500'}`}>
                                 {dayName}
                               </span>
 
-                              <span className="text-base font-extrabold leading-tight text-cream">
+                              <span className="text-base font-extrabold leading-tight">
                                 {dayNumber}
                               </span>
 
-                              <span className={`text-[9px] uppercase font-medium ${isSelected ? 'text-white/80' : 'text-cream-muted/60'}`}>
+                              <span className={`text-[9px] uppercase font-medium ${isSelected ? 'text-purple-200' : 'text-slate-400'}`}>
                                 {monthName}
                               </span>
 
                               {hasOpenPlay && !beyondLimit && (
                                 <span
                                   className={`mt-1 h-1.5 w-1.5 rounded-full ${
-                                    isSelected ? 'bg-white' : 'bg-accent-400'
+                                    isSelected ? 'bg-[#FF7A00]' : 'bg-[#3D1164]'
                                   }`}
                                 />
                               )}
@@ -858,42 +861,35 @@ export function Landing() {
                       </div>
                     </div>
 
-                    {/* Step 2: Time Slots Matrix (Preserved from original) */}
+                    {/* Step 2: Courts & Time Slots */}
                     <div>
                       <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-xs font-bold text-white shadow-sm">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FF7A00] text-xs font-bold text-white shadow-xs">
                             2
                           </div>
-                          <h3 className="text-sm font-bold text-cream sm:text-base">
-                            Choose <span className="text-accent-400">Court & Time</span>
+                          <h3 className="text-sm font-bold text-slate-900 sm:text-base">
+                            Choose <span className="text-[#3D1164]">Court & Time</span>
                           </h3>
                         </div>
 
-                        <span className="rounded-full border border-neutral-700 bg-neutral-800/80 px-3 py-1 text-xs font-semibold text-cream-muted shadow-sm">
-                          <span className="sm:hidden">
-                            {new Date(`${selectedDate}T00:00:00`).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </span>
-                          <span className="hidden sm:inline">{formatDateLong(selectedDate)}</span>
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 shadow-xs">
+                          {formatDateLong(selectedDate)}
                         </span>
                       </div>
 
                       {/* Status legend */}
-                      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-neutral-800 pb-3 text-[11px] text-cream-muted">
+                      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-slate-200 pb-3 text-[11px] text-slate-600">
                         <div className="flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full border border-[#ED1C24] bg-[#ED1C24]/40" />
+                          <span className="h-2.5 w-2.5 rounded-full border border-purple-300 bg-purple-100" />
                           <span>Available</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full bg-amber-400" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
                           <span>Pending</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full bg-neutral-600" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
                           <span>Booked</span>
                         </div>
                       </div>
@@ -901,30 +897,30 @@ export function Landing() {
                       {loadingSlots || loadingCourts || loadingOpenPlay ? (
                         <LoadingSpinner className="py-12 md:py-20" />
                       ) : error ? (
-                        <div className="py-8 text-center font-medium text-amber-400 md:py-16">{error}</div>
+                        <div className="py-8 text-center font-medium text-amber-700 md:py-16">{error}</div>
                       ) : courts.length === 0 ? (
-                        <div className="py-8 text-center text-sm font-medium text-cream-muted md:py-16">
+                        <div className="py-8 text-center text-sm font-medium text-slate-500 md:py-16">
                           No courts found.
                         </div>
                       ) : allPeriodsEmpty ? (
-                        <div className="rounded-2xl border border-neutral-800 bg-neutral-950/40 p-8 text-center">
-                          <Clock className="mx-auto h-8 w-8 text-neutral-500" />
-                          <p className="mt-3 text-sm font-semibold text-cream">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
+                          <Clock className="mx-auto h-8 w-8 text-slate-400" />
+                          <p className="mt-3 text-sm font-semibold text-slate-800">
                             {selectedDate === todayISO()
                               ? BOOKING_COPY.emptyState.titleToday
                               : BOOKING_COPY.emptyState.titleFuture}
                           </p>
-                          <p className="mt-1 text-xs text-cream-muted">
+                          <p className="mt-1 text-xs text-slate-500">
                             {BOOKING_COPY.emptyState.description}
                           </p>
                         </div>
                       ) : (
                         <div className="block">
-                          <div className="max-h-[75vh] overflow-y-auto overflow-x-auto rounded-2xl border border-neutral-800 bg-neutral-950/40">
+                          <div className="max-h-[75vh] overflow-y-auto overflow-x-auto rounded-2xl border border-slate-200 bg-white">
                             <div className="w-full p-4 sm:min-w-[580px]">
                               {/* Courts Column Header */}
                               <div
-                                className="sticky top-0 z-30 -mx-4 -mt-4 mb-4 border-b border-neutral-800 bg-neutral-900 px-4 py-3 text-center text-xs font-extrabold uppercase tracking-wider text-cream shadow-md backdrop-blur-md"
+                                className="sticky top-0 z-30 -mx-4 -mt-4 mb-4 border-b border-slate-200 bg-slate-50/95 px-4 py-3 text-center text-xs font-extrabold uppercase tracking-wider shadow-xs backdrop-blur-md"
                                 style={{
                                   display: 'grid',
                                   gridTemplateColumns: `repeat(${courts.length}, minmax(90px, 1fr))`,
@@ -938,8 +934,8 @@ export function Landing() {
                                       key={court.id}
                                       className={`flex items-center justify-center gap-2 truncate ${accent.header}`}
                                     >
-                                      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${accent.dot}`} />
-                                      <span className="truncate font-bold">{court.name}</span>
+                                      <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} />
+                                      <span className="truncate font-black">{court.name}</span>
                                     </div>
                                   );
                                 })}
@@ -949,7 +945,7 @@ export function Landing() {
                                 {morningTimes.length > 0 && (
                                   <DesktopPeriodSection
                                     title="MORNING"
-                                    icon={<CloudSun className="h-4 w-4 text-rose-400" />}
+                                    icon={<CloudSun className="h-4 w-4 text-[#FF7A00]" />}
                                     courts={courts}
                                     timeIntervals={morningTimes}
                                     getSlotForCourtAndTime={getSlotForCourtAndTime}
@@ -962,7 +958,7 @@ export function Landing() {
                                 {afternoonTimes.length > 0 && (
                                   <DesktopPeriodSection
                                     title="AFTERNOON"
-                                    icon={<Sun className="h-4 w-4 text-amber-400" />}
+                                    icon={<Sun className="h-4 w-4 text-[#FFA81A]" />}
                                     courts={courts}
                                     timeIntervals={afternoonTimes}
                                     getSlotForCourtAndTime={getSlotForCourtAndTime}
@@ -975,7 +971,7 @@ export function Landing() {
                                 {eveningTimes.length > 0 && (
                                   <DesktopPeriodSection
                                     title="EVENING"
-                                    icon={<Moon className="h-4 w-4 text-sky-400" />}
+                                    icon={<Moon className="h-4 w-4 text-[#3D1164]" />}
                                     courts={courts}
                                     timeIntervals={eveningTimes}
                                     getSlotForCourtAndTime={getSlotForCourtAndTime}
@@ -992,15 +988,15 @@ export function Landing() {
                       )}
 
                       {/* Desktop Slot Selection Bar */}
-                      <div className="mt-8 hidden items-center justify-between gap-4 rounded-xl border border-neutral-800 bg-neutral-850 p-5 sm:flex">
+                      <div className="mt-8 hidden items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:flex shadow-xs">
                         <div>
-                          <span className="text-xs font-semibold uppercase tracking-wider text-rose-400">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#FF7A00]">
                             Selected Slots
                           </span>
-                          <div className="text-lg font-bold text-cream">
+                          <div className="text-lg font-bold text-slate-900">
                             {selectedSlotIds.length} slot{selectedSlotIds.length !== 1 && 's'} chosen
                             {selectedSlotIds.length > 0 && (
-                              <span className="ml-2 text-base font-semibold text-accent-400">
+                              <span className="ml-2 text-base font-extrabold text-[#3D1164]">
                                 ({formatCurrency(totalSelected)})
                               </span>
                             )}
@@ -1012,6 +1008,7 @@ export function Landing() {
                           onClick={() => navigate('/booking')}
                           disabled={selectedSlotIds.length === 0 || !bookingsEnabled}
                           rightIcon={<ArrowRight className="h-5 w-5" />}
+                          className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
                         >
                           Proceed to Reservation
                         </Button>
@@ -1027,19 +1024,19 @@ export function Landing() {
 
       {/* Mobile Sticky Bottom Floating Action Bar */}
       {selectedSlotIds.length > 0 && bookingsEnabled && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-700 bg-charcoal/95 p-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl backdrop-blur-md sm:hidden">
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-cream-muted">
+              <p className="text-xs font-semibold text-slate-500">
                 {selectedSlotIds.length} Slot{selectedSlotIds.length !== 1 ? 's' : ''} Selected
               </p>
-              <p className="text-lg font-bold text-accent-400">{formatCurrency(totalSelected)}</p>
+              <p className="text-lg font-black text-[#3D1164]">{formatCurrency(totalSelected)}</p>
             </div>
             <Button
               size="md"
               onClick={() => navigate('/booking')}
               rightIcon={<ArrowRight className="h-4 w-4" />}
-              className="shrink-0"
+              className="shrink-0 bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
             >
               Proceed
             </Button>
@@ -1048,29 +1045,29 @@ export function Landing() {
       )}
 
       {/* Find Us Section */}
-      <section className="border-b border-neutral-800 bg-neutral-950/60 py-12 sm:py-20">
+      <section className="border-t border-slate-200 bg-white py-12 sm:py-20">
         <div className="container-page">
           <div className="mb-8 text-center sm:mb-12">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-accent-400 sm:text-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF7A00] sm:text-xs">
               Location
             </span>
-            <h2 className="section-title mt-2 text-2xl sm:text-3xl md:text-4xl">
+            <h2 className="section-title mt-2 text-2xl sm:text-3xl md:text-4xl text-slate-900">
               Find Us
             </h2>
-            <p className="mt-2 text-xs text-cream-muted sm:text-sm">
+            <p className="mt-2 text-xs text-slate-500 sm:text-sm">
               National Highway, Rosario, Tandag City
             </p>
           </div>
 
-          <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 shadow-xl">
-            <div className="relative w-full aspect-[4/3] sm:aspect-auto sm:h-[500px]">
+          <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
+            <div className="relative w-full aspect-[4/3] sm:aspect-auto sm:h-[480px]">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d280.2669586700182!2d126.20822932494922!3d9.053797356959693!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x330237000c13b973%3A0xfc62991506f06131!2sSmash%20Point%20Pickle%20Sports%20Center!5e1!3m2!1sen!2sph!4v1793489693612!5m2!1sen!2sph"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d280.2669586700182!2d126.20822932494922!3d9.053797356959693!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x330237000c13b973%3A0xfc62991506f06131!2sSmash%20Zone%20by%20Jerjen!5e1!3m2!1sen!2sph!4v1793489693612!5m2!1sen!2sph"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="strict-origin-when-cross-origin"
-                title="Smash Point Pickle Sports Center Location"
+                title="Smash Zone by Jerjen Location"
                 className="absolute inset-0 h-full w-full"
               />
             </div>
@@ -1079,13 +1076,13 @@ export function Landing() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-14 sm:py-20 bg-neutral-950/40">
+      <section className="py-14 sm:py-20 bg-slate-50 border-t border-slate-200">
         <div className="container-page">
           <div className="mb-10 text-center sm:mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-accent-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#FF7A00]">
               Simple Process
             </span>
-            <h2 className="section-title mt-2">How It Works</h2>
+            <h2 className="section-title mt-2 text-slate-900">How It Works</h2>
           </div>
 
           <div className="grid gap-6 sm:gap-8 md:grid-cols-4">
@@ -1101,18 +1098,14 @@ export function Landing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="relative"
+                className="relative rounded-2xl border border-slate-200 bg-white p-5 shadow-xs"
               >
-                <div className="mb-3 font-display text-4xl font-extrabold tracking-tight text-neutral-700 sm:mb-4 sm:text-5xl">
+                <div className="mb-3 font-display text-4xl font-extrabold tracking-tight text-slate-300 sm:mb-4 sm:text-5xl">
                   {item.step}
                 </div>
 
-                <h3 className="text-base font-bold text-cream sm:text-lg">{item.title}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-cream-muted sm:text-sm">{item.desc}</p>
-
-                {i < 3 && (
-                  <div className="mt-6 hidden h-px bg-gradient-to-r from-neutral-800 via-neutral-700/50 to-transparent md:block" />
-                )}
+                <h3 className="text-base font-bold text-slate-900 sm:text-lg">{item.title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -1126,7 +1119,7 @@ export function Landing() {
 }
 
 // --------------------------------------------------------
-// SUB-COMPONENTS (Original Timeslot Table Intact)
+// SUB-COMPONENTS
 // --------------------------------------------------------
 
 function DesktopPeriodSection({
@@ -1154,10 +1147,10 @@ function DesktopPeriodSection({
     <div>
       <div className="mb-3 flex items-center gap-2">
         <span className="h-4 w-4">{icon}</span>
-        <span className="text-xs font-bold uppercase tracking-wider text-cream-muted">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
           {title}
         </span>
-        <div className="h-px flex-1 bg-neutral-800" />
+        <div className="h-px flex-1 bg-slate-200" />
       </div>
 
       <div className="space-y-2.5">
@@ -1178,7 +1171,7 @@ function DesktopPeriodSection({
                 return (
                   <div
                     key={`${court.id}-${interval.start_time}`}
-                    className="flex h-11 select-none items-center justify-center rounded-xl border border-neutral-800/60 bg-neutral-950/60 text-xs text-neutral-700"
+                    className="flex h-11 select-none items-center justify-center rounded-xl border border-slate-100 bg-slate-50 text-xs font-bold text-slate-300"
                   >
                     —
                   </div>
@@ -1227,23 +1220,22 @@ function OpenPlayPill({
   return (
     <button
       onClick={onClick}
-      className="group relative flex h-11 w-full items-center justify-between rounded-xl border-2 border-accent-400 bg-accent-500/15 px-3 font-bold transition-all hover:bg-accent-500/25 hover:shadow-[0_0_20px_-4px_rgba(255,183,3,0.5)] active:scale-95"
+      className="group relative flex h-11 w-full items-center justify-between rounded-xl border-2 border-orange-300 bg-orange-50 px-3 font-bold transition-all hover:bg-orange-100 hover:border-[#FF7A00] active:scale-95 shadow-xs"
       title={`Open Play: ${session.current_players}/${session.max_players} players · ${session.skill_level}`}
     >
-      <span className="text-xs font-black text-accent-400">OP</span>
-      <span className="text-xs font-semibold text-accent-200">
+      <span className="text-xs font-black text-[#FF7A00]">OP</span>
+      <span className="text-xs font-bold text-orange-900">
         {session.current_players}/{session.max_players} joined
       </span>
 
-      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-xs text-cream shadow-xl group-hover:block">
-        <p className="font-semibold text-accent-400">Open Play Session</p>
-        <p className="text-[11px] text-cream-muted">
+      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 shadow-xl group-hover:block">
+        <p className="font-bold text-[#FF7A00]">Open Play Session</p>
+        <p className="text-[11px] text-slate-500">
           {session.current_players}/{session.max_players} players · {session.skill_level}
         </p>
         {session.host_name && (
-          <p className="text-[11px] text-cream-muted">Host: {session.host_name}</p>
+          <p className="text-[11px] text-slate-500">Host: {session.host_name}</p>
         )}
-        <div className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rotate-45 border-b border-r border-neutral-700 bg-neutral-900" />
       </div>
     </button>
   );
@@ -1263,14 +1255,14 @@ function SlotPill({
   const isAvailable = slot.is_available;
   const isPending = (slot as unknown as { is_pending?: boolean }).is_pending;
 
-  let styleClasses = `${accent.border} ${accent.bg} ${accent.text} ${accent.hoverBorder} ${accent.hoverBg} cursor-pointer`;
+  let styleClasses = `${accent.border} ${accent.bg} ${accent.text} ${accent.hoverBorder} ${accent.hoverBg} cursor-pointer shadow-xs`;
 
   if (!isAvailable) {
-    styleClasses = 'border-neutral-800/80 bg-neutral-900/60 text-neutral-500/70 line-through cursor-not-allowed';
+    styleClasses = 'border-slate-200 bg-slate-100 text-slate-400 line-through cursor-not-allowed';
   } else if (isPending) {
-    styleClasses = 'border-amber-500/40 bg-amber-500/10 text-amber-300/80 cursor-not-allowed';
+    styleClasses = 'border-amber-300 bg-amber-50 text-amber-700 cursor-not-allowed';
   } else if (isSelected) {
-    styleClasses = 'border-white bg-[#ED1C24] text-white font-bold shadow-[0_0_16px_rgba(237,28,36,0.35)]';
+    styleClasses = 'border-transparent bg-[#3D1164] text-white font-black shadow-md';
   }
 
   return (
@@ -1278,7 +1270,7 @@ function SlotPill({
       onClick={isAvailable && !isPending ? onToggle : undefined}
       disabled={!isAvailable || isPending}
       aria-pressed={isSelected}
-      className={`flex h-11 w-full items-center justify-center rounded-xl border text-[11px] font-semibold tracking-tight transition-all px-1 active:scale-95 ${styleClasses}`}
+      className={`flex h-11 w-full items-center justify-center rounded-xl border text-[11px] font-bold tracking-tight transition-all px-1 active:scale-95 ${styleClasses}`}
     >
       <span className="truncate flex items-center gap-1">
         {formatTimeRangeShort(slot.start_time, slot.end_time)}

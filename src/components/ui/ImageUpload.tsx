@@ -45,7 +45,7 @@ export function ImageUpload({
       formData.append('file', file);
 
       const token = localStorage.getItem('admin_token');
-      const clientSubdomain = import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashpoint';
+      const clientSubdomain = import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashzone';
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
       if (!apiBaseUrl) {
@@ -84,7 +84,7 @@ export function ImageUpload({
   return (
     <div className={`space-y-2 ${className}`}>
       {label && (
-        <label className="block text-xs font-semibold uppercase tracking-wider text-cream-muted">
+        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
           {label}
         </label>
       )}
@@ -100,7 +100,7 @@ export function ImageUpload({
 
         {value ? (
           <div className="relative group">
-            <div className="relative h-32 w-32 overflow-hidden rounded-xl border border-neutral-700 bg-neutral-950 shadow-md">
+            <div className="relative h-32 w-32 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               <img
                 src={value}
                 alt="Uploaded"
@@ -110,11 +110,11 @@ export function ImageUpload({
                     'https://via.placeholder.com/128x128?text=Error';
                 }}
               />
-              <div className="absolute inset-0 flex items-center justify-center gap-2 bg-charcoal/70 opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 flex items-center justify-center gap-2 bg-slate-900/60 opacity-0 backdrop-blur-xs transition-opacity group-hover:opacity-100">
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg bg-primary-500/90 p-2 text-white transition hover:bg-primary-500"
+                  className="rounded-lg bg-[#FF7A00] p-2 text-white shadow-sm transition hover:bg-[#E56600]"
                   title="Change image"
                 >
                   <Upload className="h-4 w-4" />
@@ -122,7 +122,7 @@ export function ImageUpload({
                 <button
                   type="button"
                   onClick={handleRemove}
-                  className="rounded-lg bg-error/90 p-2 text-white transition hover:bg-error"
+                  className="rounded-lg bg-rose-600 p-2 text-white shadow-sm transition hover:bg-rose-700"
                   title="Remove image"
                 >
                   <X className="h-4 w-4" />
@@ -135,21 +135,21 @@ export function ImageUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="flex h-32 w-32 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-neutral-700 bg-neutral-950/40 text-cream-muted transition-all hover:border-primary-400 hover:bg-primary-500/5 hover:text-primary-200 disabled:opacity-50"
+            className="flex h-32 w-32 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white text-slate-500 shadow-xs transition-all hover:border-[#FF7A00] hover:bg-orange-50/50 hover:text-[#FF7A00] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {uploading ? (
-              <Loader2 className="h-7 w-7 animate-spin text-primary-400" />
+              <Loader2 className="h-7 w-7 animate-spin text-[#FF7A00]" />
             ) : (
               <>
-                <Image className="h-7 w-7 text-cream-muted/60" />
-                <span className="text-xs font-medium">Upload Image</span>
+                <Image className="h-7 w-7 text-slate-400 group-hover:text-[#FF7A00]" />
+                <span className="text-xs font-semibold">Upload Image</span>
               </>
             )}
           </button>
         )}
       </div>
 
-      {error && <p className="text-xs font-medium text-error">{error}</p>}
+      {error && <p className="text-xs font-semibold text-rose-600">{error}</p>}
     </div>
   );
 }

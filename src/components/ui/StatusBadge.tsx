@@ -15,10 +15,10 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border font-bold uppercase tracking-wider ${meta.color} ${meta.bg} ${meta.border} ${sizeClass}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border font-bold uppercase tracking-wider shadow-sm ${meta.color} ${meta.bg} ${meta.border} ${sizeClass}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
-      {meta.label}
+      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${meta.dot}`} />
+      <span>{meta.label}</span>
     </span>
   );
 }

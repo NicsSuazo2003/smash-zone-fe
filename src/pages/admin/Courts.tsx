@@ -36,7 +36,7 @@ export function Courts() {
       await updateCourt(editing);
       setEditing(null);
     } catch {
-      // Store surfaces the error.
+      // Store captures error
     } finally {
       setSaving(false);
     }
@@ -52,16 +52,16 @@ export function Courts() {
 
   return (
     <AdminLayout>
-      <div className="container-page py-6 sm:py-8 text-cream">
+      <div className="container-page py-6 sm:py-8 text-slate-900">
         <div className="mb-6 sm:mb-8">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-cream sm:text-3xl">
+          <h1 className="font-display text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Courts Management
           </h1>
-          <p className="mt-1 text-xs text-cream-muted sm:text-sm">
-            Manage court details, operating hours, and images. Pricing is on the{' '}
+          <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+            Manage court details, hours, and photos. Set hourly rates on the{' '}
             <Link
               to="/admin/pricing"
-              className="text-accent-400 underline hover:text-accent-300"
+              className="font-bold text-[#FF7A00] underline hover:text-[#E56600]"
             >
               Pricing page
             </Link>
@@ -72,12 +72,10 @@ export function Courts() {
         {loadingCourts ? (
           <LoadingSpinner className="py-16" />
         ) : courts.length === 0 ? (
-          <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/60 py-12 text-center shadow-xl backdrop-blur-sm">
-            <Building2 className="mx-auto h-12 w-12 text-cream-muted/40" />
-            <p className="mt-4 text-sm font-medium text-cream-muted">No courts found.</p>
-            <p className="text-xs text-cream-muted/60">
-              Configure your venue courts to get started.
-            </p>
+          <div className="rounded-3xl border border-slate-200 bg-white py-12 text-center shadow-xs">
+            <Building2 className="mx-auto h-12 w-12 text-slate-300" />
+            <p className="mt-4 text-sm font-bold text-slate-800">No courts found.</p>
+            <p className="text-xs text-slate-500">Configure venue courts to get started.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -90,10 +88,10 @@ export function Courts() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 overflow-hidden shadow-xl backdrop-blur-sm transition-all hover:border-primary-400/50 flex flex-col justify-between"
+                  className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs transition hover:shadow-md flex flex-col justify-between"
                 >
                   <div>
-                    <div className="relative h-40 overflow-hidden sm:h-44">
+                    <div className="relative h-44 overflow-hidden bg-slate-100">
                       <img
                         src={getImageUrl(court)}
                         alt={court?.name || 'Court'}
@@ -103,68 +101,62 @@ export function Courts() {
                             'https://images.pexels.com/photos/17299530/pexels-photo-17299530.jpeg?auto=compress&cs=tinysrgb&w=1200';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       <div className="absolute bottom-3 left-3">
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black ${
                             court?.is_active
-                              ? 'border border-accent-400/40 bg-accent-500/20 text-accent-300'
-                              : 'border border-red-500/40 bg-red-500/20 text-red-400'
+                              ? 'bg-emerald-500 text-white shadow-xs'
+                              : 'bg-rose-500 text-white shadow-xs'
                           }`}
                         >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              court?.is_active ? 'bg-accent-400' : 'bg-red-400'
-                            }`}
-                          />
                           {court?.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </div>
                     </div>
 
-                    <div className="p-4 sm:p-5">
-                      <h3 className="font-display text-base font-bold text-cream sm:text-lg">
+                    <div className="p-5">
+                      <h3 className="font-display text-lg font-bold text-slate-900">
                         {court?.name || 'Unnamed Court'}
                       </h3>
-                      <p className="mt-1 line-clamp-2 text-xs text-cream-muted leading-relaxed">
+                      <p className="mt-1 line-clamp-2 text-xs text-slate-500 leading-relaxed">
                         {court?.description || 'No description provided.'}
                       </p>
 
-                      <div className="mt-4 rounded-xl border border-neutral-700 bg-neutral-950/40 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-cream-muted">
+                      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                           Current Rates
                         </p>
-                        <p className="mt-1 text-sm font-extrabold text-accent-400">
+                        <p className="mt-1 text-base font-black text-[#FF7A00]">
                           {formatCurrency(court?.price_per_hour || 0)}
-                          <span className="text-[10px] font-normal text-cream-muted">
-                            /hr base
-                          </span>
+                          <span className="text-[10px] font-medium text-slate-500"> /hr base</span>
                         </p>
                         <Link
                           to="/admin/pricing"
-                          className="mt-1.5 inline-block text-[10px] text-accent-400 underline hover:text-accent-300"
+                          className="mt-1.5 inline-block text-[11px] font-bold text-[#3D1164] underline"
                         >
                           Edit on Pricing page →
                         </Link>
                       </div>
 
-                      <div className="mt-3 text-[11px] font-medium text-cream-muted">
-                        Operating Hours:{' '}
-                        <span className="text-cream">
+                      <div className="mt-3 text-xs font-semibold text-slate-500">
+                        Playing Hours:{' '}
+                        <span className="text-slate-900 font-bold">
                           {court?.open_time || 'N/A'} – {court?.close_time || 'N/A'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 pt-0 sm:p-5 sm:pt-0">
+                  <div className="p-5 pt-0">
                     <Button
                       size="sm"
                       variant="secondary"
                       fullWidth
-                      leftIcon={<Edit3 className="h-3.5 w-3.5" />}
+                      leftIcon={<Edit3 className="h-4 w-4" />}
                       onClick={() => court && startEditing(court)}
                       disabled={!court}
+                      className="bg-white border-slate-300 text-slate-800"
                     >
                       Edit Court Details
                     </Button>
@@ -221,65 +213,59 @@ export function Courts() {
 
             <Input
               label="Surface Type"
-              placeholder="e.g. Acrylic Sport Coating, Concrete"
+              placeholder="e.g. Pro Acrylic Sport Coating"
               value={editing?.surface || ''}
               onChange={(e) => setEditing({ ...editing, surface: e.target.value })}
             />
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center pt-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-cream cursor-pointer">
+              <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={editing?.is_indoor || false}
                   onChange={(e) => setEditing({ ...editing, is_indoor: e.target.checked })}
-                  className="h-4 w-4 rounded border-neutral-600 bg-neutral-950 accent-primary-500 cursor-pointer"
+                  className="h-4 w-4 rounded border-slate-300 accent-[#3D1164] cursor-pointer"
                 />
                 Indoor Court
               </label>
-              <label className="flex items-center gap-2 text-xs font-semibold text-cream cursor-pointer">
+              <label className="flex items-center gap-2 text-xs font-bold text-slate-800 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={editing?.is_active || false}
                   onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })}
-                  className="h-4 w-4 rounded border-neutral-600 bg-neutral-950 accent-primary-500 cursor-pointer"
+                  className="h-4 w-4 rounded border-slate-300 accent-[#3D1164] cursor-pointer"
                 />
-                Active (Bookable by public)
+                Active (Bookable online)
               </label>
             </div>
 
-            <div className="rounded-xl border border-primary-500/30 bg-primary-500/10 p-3 text-xs text-cream-muted">
-              <strong className="text-primary-200">Pricing is not edited here.</strong>{' '}
-              To change rates or add day-based rules, go to the{' '}
-              <Link
-                to="/admin/pricing"
-                className="font-semibold text-primary-300 underline hover:text-primary-200"
-              >
-                Pricing page
+            <div className="rounded-2xl border border-purple-200 bg-purple-50 p-3.5 text-xs text-slate-700">
+              <strong className="text-[#3D1164]">Hourly rates are managed on the Pricing page.</strong>{' '}
+              <Link to="/admin/pricing" className="font-bold text-[#FF7A00] underline">
+                Go to Pricing
               </Link>
-              .
             </div>
 
-            <div className="sticky bottom-0 -mx-4 -mb-4 mt-5 border-t border-neutral-700 bg-neutral-900/95 p-4 backdrop-blur-sm sm:static sm:mx-0 sm:mb-0 sm:bg-transparent sm:p-0 sm:pt-4">
-              <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                <Button
-                  size="md"
-                  fullWidth
-                  isLoading={saving}
-                  leftIcon={<Save className="h-4 w-4" />}
-                  onClick={handleSave}
-                >
-                  Save Changes
-                </Button>
-                <Button
-                  size="md"
-                  variant="ghost"
-                  fullWidth
-                  className="sm:w-auto"
-                  onClick={() => setEditing(null)}
-                >
-                  Cancel
-                </Button>
-              </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 pt-2">
+              <Button
+                size="md"
+                fullWidth
+                isLoading={saving}
+                leftIcon={<Save className="h-4 w-4" />}
+                onClick={handleSave}
+                className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
+              >
+                Save Changes
+              </Button>
+              <Button
+                size="md"
+                variant="ghost"
+                fullWidth
+                className="sm:w-auto"
+                onClick={() => setEditing(null)}
+              >
+                Cancel
+              </Button>
             </div>
           </div>
         </Modal>

@@ -1,4 +1,3 @@
-// src/pages/Track.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -38,7 +37,7 @@ export function Track() {
   const settings = useClientStore((state) => state.settings);
   const loadSettings = useClientStore((state) => state.loadSettings);
   const courts = useBookingStore((state) => state.courts);
-const loadCourts = useBookingStore((state) => state.loadCourts);
+  const loadCourts = useBookingStore((state) => state.loadCourts);
 
   const displayNumber = settings?.gcash_number || APP_CONFIG.paymentNumber;
 
@@ -135,25 +134,23 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
   const hasPaymentScreenshot = booking?.payment_screenshot_url;
   const canSearch = reference.trim().length > 0 || email.trim().length > 0;
 
-    // Group slots by court to ensure multiple courts display correctly
   const groupedSlots = useMemo(() => {
     if (!booking || !booking.slots) return [];
     const map = new Map<string, { start_time: string; end_time: string; court_name: string }[]>();
-    
+
     booking.slots.forEach((s) => {
       const cid = s.court_id || 'unknown';
       if (!map.has(cid)) map.set(cid, []);
-      
-      map.get(cid)!.push({ 
-        start_time: s.start_time || '', 
+
+      map.get(cid)!.push({
+        start_time: s.start_time || '',
         end_time: s.end_time || '',
-        court_name: s.court_name || '' // ✅ Read from API
+        court_name: s.court_name || '',
       });
     });
 
     let unknownIndex = 1;
     return Array.from(map.entries()).map(([cid, times]) => {
-      // ✅ FIX: Use string | undefined to satisfy TypeScript
       let courtName: string | undefined = times[0]?.court_name;
 
       if (!courtName) {
@@ -177,40 +174,40 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
 
   const displayCourtNames = useMemo(() => {
     if (groupedSlots.length === 0) return booking?.court_name || '';
-    const uniqueNames = Array.from(new Set(groupedSlots.map(g => g.courtName)));
+    const uniqueNames = Array.from(new Set(groupedSlots.map((g) => g.courtName)));
     return uniqueNames.join(', ');
   }, [groupedSlots, booking]);
 
   return (
-    <div className="min-h-screen bg-charcoal text-cream">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
       <div className="container-page pt-24 pb-14 sm:pt-28 sm:pb-16">
         {isInAppBrowser() && (
-          <div className="mx-auto mb-4 flex max-w-3xl items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-200">
-            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-400" />
+          <div className="mx-auto mb-4 flex max-w-3xl items-start gap-2.5 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-800">
+            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" />
             <span>
-              You're viewing this in {getInAppBrowserName() ?? 'an in-app'} browser. If uploading a screenshot doesn't work, tap <strong>⋯</strong> and choose <strong>"Open in Browser."</strong>
+              You&apos;re viewing this in {getInAppBrowserName() ?? 'an in-app'} browser. If uploading doesn&apos;t work, choose <strong>&quot;Open in Browser.&quot;</strong>
             </span>
           </div>
         )}
 
         <div className="mx-auto max-w-3xl">
           <div className="mb-6 text-center sm:mb-8">
-            <h1 className="font-display text-2xl font-bold text-cream sm:text-3xl lg:text-4xl">
+            <h1 className="font-display text-2xl font-black text-slate-900 sm:text-3xl lg:text-4xl uppercase tracking-tight">
               Track Your Booking
             </h1>
-            <p className="mt-1.5 text-xs text-cream-muted sm:mt-2 sm:text-sm">
-              Search by reference code for one booking, or by email to see bookings pending payment.
+            <p className="mt-1.5 text-xs text-slate-500 sm:mt-2 sm:text-sm">
+              Search by reference code (SZ...) for one booking, or by email to see pending bookings.
             </p>
           </div>
 
-          <form onSubmit={handleSearch} className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6 shadow-xl backdrop-blur-sm">
-            <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
+          <form onSubmit={handleSearch} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Input
                 label="Reference Code"
-                placeholder="e.g. SPAB12CD"
-                leftIcon={<Search className="h-4 w-4 text-cream-muted" />}
+                placeholder="e.g. SZAB12CD"
+                leftIcon={<Search className="h-4 w-4 text-slate-400" />}
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
                 hint="Optional if you provide email"
@@ -219,22 +216,32 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
                 label="Email"
                 type="email"
                 placeholder="your@email.com"
-                leftIcon={<Mail className="h-4 w-4 text-cream-muted" />}
+                leftIcon={<Mail className="h-4 w-4 text-slate-400" />}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                hint="Shows only bookings that need payment action"
+                hint="Shows only bookings needing payment"
               />
             </div>
-            <Button type="submit" size="lg" fullWidth className="mt-4 sm:w-auto" isLoading={loading} disabled={!canSearch} leftIcon={<Search className="h-5 w-5" />}>
+            <Button
+              type="submit"
+              size="lg"
+              fullWidth
+              className="mt-4 sm:w-auto bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
+              isLoading={loading}
+              disabled={!canSearch}
+              leftIcon={<Search className="h-5 w-5" />}
+            >
               Search Booking
             </Button>
             {!canSearch && (
-              <p className="mt-2 text-[11px] text-cream-muted">Enter a reference code or email to enable search.</p>
+              <p className="mt-2 text-[11px] text-slate-400">
+                Enter a reference code or email to enable search.
+              </p>
             )}
           </form>
 
           {error && (
-            <div className="mt-4 flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-300 font-medium">
+            <div className="mt-4 flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-700 font-semibold">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -246,29 +253,49 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
             <div className="mt-6 space-y-3 sm:mt-8">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <h2 className="text-sm font-bold text-cream sm:text-base">Bookings Needing Payment Action ({summaries.length})</h2>
-                  <p className="text-[11px] text-cream-muted">Confirmed or completed bookings won't appear here. Use your reference code to see them.</p>
+                  <h2 className="text-sm font-bold text-slate-900 sm:text-base">
+                    Bookings Needing Action ({summaries.length})
+                  </h2>
+                  <p className="text-[11px] text-slate-500">
+                    Confirmed bookings won&apos;t appear here. Use your reference code to view them.
+                  </p>
                 </div>
-                <button onClick={() => { setSummaries([]); setEmail(''); }} className="shrink-0 text-[11px] text-cream-muted underline hover:text-white">
+                <button
+                  onClick={() => {
+                    setSummaries([]);
+                    setEmail('');
+                  }}
+                  className="shrink-0 text-[11px] font-bold text-slate-500 underline hover:text-slate-800"
+                >
                   Clear
                 </button>
               </div>
 
               {summaries.map((s) => (
-                <motion.button key={s.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} onClick={() => handleSummaryClick(s)} className="w-full cursor-pointer rounded-2xl border border-neutral-700 bg-neutral-900/80 p-4 text-left shadow-xl backdrop-blur-sm transition hover:border-sky-400/60">
+                <motion.button
+                  key={s.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onClick={() => handleSummaryClick(s)}
+                  className="w-full cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-xs transition hover:border-[#FF7A00]"
+                >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="font-mono text-sm font-extrabold tracking-wider text-sky-300">
+                      <p className="font-mono text-sm font-black text-[#3D1164]">
                         {s.reference_code}
                       </p>
-                      <p className="mt-0.5 text-xs text-cream-muted">
+                      <p className="mt-0.5 text-xs text-slate-600 font-medium">
                         {s.court_name} · {formatDateLong(s.date)}
-                        {s.start_time && s.end_time && (<> · {formatTimeRange(s.start_time, s.end_time)}</>)}
+                        {s.start_time && s.end_time && (
+                          <> · {formatTimeRange(s.start_time, s.end_time)}</>
+                        )}
                       </p>
                     </div>
                     <StatusBadge status={s.status} />
                   </div>
-                  <p className="mt-2 text-[11px] text-cream-muted">Booked {formatDateTime(s.created_at)} · {formatCurrency(s.total_amount)}</p>
+                  <p className="mt-2 text-[11px] font-semibold text-[#FF7A00]">
+                    Booked {formatDateTime(s.created_at)} · {formatCurrency(s.total_amount)}
+                  </p>
                 </motion.button>
               ))}
             </div>
@@ -276,47 +303,56 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
 
           <AnimatePresence>
             {booking && !loading && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 space-y-4 sm:mt-8 sm:space-y-6">
-                <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6 shadow-xl backdrop-blur-sm">
-                  <div className="flex flex-col gap-3 border-b border-neutral-700 pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-6 space-y-4 sm:mt-8 sm:space-y-6"
+              >
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-cream-muted">Reference Code</p>
-                      <p className="font-mono text-xl font-extrabold tracking-wider text-sky-300 sm:text-2xl">{booking.reference_code}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Reference Code
+                      </p>
+                      <p className="font-mono text-xl font-black text-[#3D1164] sm:text-2xl">
+                        {booking.reference_code}
+                      </p>
                     </div>
                     <StatusBadge status={booking.status} size="md" />
                   </div>
 
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950/70 text-sky-300">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-[#3D1164]">
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-cream-muted">Court</p>
-                        <p className="text-sm font-bold text-cream sm:text-base">{displayCourtNames}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Court</p>
+                        <p className="text-sm font-bold text-slate-900 sm:text-base">{displayCourtNames}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-950/70 text-sky-300">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-[#FF7A00]">
                         <Calendar className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-cream-muted">Date</p>
-                        <p className="text-sm font-bold text-cream sm:text-base">{formatDateLong(booking.date)}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Date</p>
+                        <p className="text-sm font-bold text-slate-900 sm:text-base">{formatDateLong(booking.date)}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-300">Time Slots</p>
-                    <div className="space-y-3">
+                    <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Time Slots</p>
+                    <div className="space-y-2">
                       {groupedSlots.map((group, idx) => (
-                        <div key={idx} className="rounded-xl border border-neutral-700 bg-neutral-800/80 p-3">
-                          <p className="mb-1.5 text-xs font-bold text-cream">{group.courtName}</p>
+                        <div key={idx} className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+                          <p className="mb-1 text-xs font-bold text-slate-900">{group.courtName}</p>
                           <div className="space-y-1">
                             {group.times.map((t, i) => (
-                              <div key={i} className="flex items-center gap-2 text-xs text-cream-muted">
-                                <Clock className="h-3.5 w-3.5 text-sky-300" />
+                              <div key={i} className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+                                <Clock className="h-3.5 w-3.5 text-slate-400" />
                                 <span>{formatTimeRange(t.start_time, t.end_time)}</span>
                               </div>
                             ))}
@@ -326,59 +362,64 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between border-t border-neutral-700 pt-4">
-                    <span className="text-xs text-cream-muted sm:text-sm">Total Amount</span>
-                    <span className="font-display text-2xl font-extrabold text-accent-400">{formatCurrency(booking.total_amount)}</span>
+                  <div className="mt-5 flex items-center justify-between border-t border-slate-200 pt-4">
+                    <span className="text-xs font-semibold text-slate-500 sm:text-sm">Total Amount</span>
+                    <span className="font-display text-2xl font-black text-[#FF7A00]">
+                      {formatCurrency(booking.total_amount)}
+                    </span>
                   </div>
                 </div>
 
-                <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6 shadow-xl backdrop-blur-sm">
-                  <h3 className="mb-3.5 font-display text-base font-bold text-cream">Customer Details</h3>
+                {/* Customer Details */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 className="mb-3.5 font-display text-base font-bold text-slate-900">
+                    Customer Details
+                  </h3>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="flex items-center gap-2 text-xs sm:text-sm">
-                      <User className="h-4 w-4 shrink-0 text-sky-300" />
-                      <span className="text-cream-muted">Name:</span>
-                      <span className="truncate font-medium text-cream">{booking.customer.name}</span>
+                      <User className="h-4 w-4 shrink-0 text-slate-400" />
+                      <span className="text-slate-500">Name:</span>
+                      <span className="truncate font-semibold text-slate-900">{booking.customer.name}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs sm:text-sm">
-                      <Mail className="h-4 w-4 shrink-0 text-sky-300" />
-                      <span className="text-cream-muted">Email:</span>
-                      <span className="truncate font-medium text-cream">{booking.customer.email}</span>
+                      <Mail className="h-4 w-4 shrink-0 text-slate-400" />
+                      <span className="text-slate-500">Email:</span>
+                      <span className="truncate font-semibold text-slate-900">{booking.customer.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs sm:text-sm">
-                      <Phone className="h-4 w-4 shrink-0 text-sky-300" />
-                      <span className="text-cream-muted">Phone:</span>
-                      <span className="font-medium text-cream">{booking.customer.phone}</span>
+                      <Phone className="h-4 w-4 shrink-0 text-slate-400" />
+                      <span className="text-slate-500">Phone:</span>
+                      <span className="font-semibold text-slate-900">{booking.customer.phone}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs sm:text-sm">
-                      <Calendar className="h-4 w-4 shrink-0 text-sky-300" />
-                      <span className="text-cream-muted">Booked:</span>
-                      <span className="font-medium text-cream">{formatDateTime(booking.created_at)}</span>
+                      <Calendar className="h-4 w-4 shrink-0 text-slate-400" />
+                      <span className="text-slate-500">Booked:</span>
+                      <span className="font-semibold text-slate-900">{formatDateTime(booking.created_at)}</span>
                     </div>
                   </div>
                   {booking.customer.notes && (
-                    <div className="mt-3 rounded-xl border border-neutral-700 bg-neutral-950/60 p-3 text-xs text-cream-muted leading-relaxed">
-                      <span className="font-semibold text-cream">Notes: </span>
+                    <div className="mt-3.5 rounded-2xl border border-slate-200 bg-slate-50 p-3.5 text-xs text-slate-600 leading-relaxed">
+                      <span className="font-bold text-slate-800">Notes: </span>
                       {booking.customer.notes}
                     </div>
                   )}
                 </div>
 
-                {/* Payment Upload Section */}
+                {/* Payment Upload Section if pending */}
                 {canUploadPayment && !hasPaymentScreenshot && (
-                  <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6 shadow-xl backdrop-blur-sm">
-                    <h3 className="mb-2 flex items-center gap-2 font-display text-base font-bold text-cream">
-                      <Wallet className="h-5 w-5 text-sky-300" />
+                  <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-2 flex items-center gap-2 font-display text-base font-bold text-slate-900">
+                      <Wallet className="h-5 w-5 text-[#FF7A00]" />
                       Complete Payment
                     </h3>
-                    <p className="mb-3.5 text-xs text-cream-muted sm:text-sm">
-                      Send {formatCurrency(booking.total_amount)} to our payment account{' '}
-                      <span className="font-bold text-sky-300">{displayNumber}</span> and
+                    <p className="mb-3.5 text-xs text-slate-500 sm:text-sm">
+                      Send {formatCurrency(booking.total_amount)} to our account{' '}
+                      <span className="font-bold text-slate-900">{displayNumber}</span> and
                       upload your receipt below.
                     </p>
 
                     {uploadSuccess ? (
-                      <div className="rounded-xl border border-accent-500/40 bg-accent-500/10 p-3.5 text-center text-xs font-semibold text-accent-300 sm:text-sm">
+                      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center text-xs font-bold text-emerald-800 sm:text-sm">
                         Payment screenshot uploaded! Your booking is being reviewed.
                       </div>
                     ) : (
@@ -390,28 +431,28 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
                             const file = e.dataTransfer.files[0];
                             if (file) handleFile(file);
                           }}
-                          className="rounded-xl border-2 border-dashed border-neutral-700 bg-neutral-950/40 p-4 text-center transition-all hover:border-sky-400/60 sm:p-6"
+                          className="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-5 text-center transition-all hover:bg-slate-50 sm:p-6"
                         >
                           {screenshot ? (
                             <div className="space-y-2">
                               <img
                                 src={screenshot}
                                 alt="Screenshot"
-                                className="mx-auto max-h-36 rounded-lg object-contain border border-neutral-700 bg-neutral-950 sm:max-h-40"
+                                className="mx-auto max-h-40 rounded-xl object-contain border border-slate-200 bg-white"
                               />
                               <button
                                 onClick={() => setScreenshot(null)}
-                                className="text-xs text-cream-muted underline hover:text-white transition"
+                                className="text-xs font-semibold text-slate-500 underline hover:text-rose-600 transition"
                               >
                                 Change image
                               </button>
                             </div>
                           ) : (
                             <>
-                              <ImageIcon className="mx-auto h-8 w-8 text-cream-muted/40" />
-                              <p className="mt-2 text-xs text-cream-muted">
+                              <ImageIcon className="mx-auto h-8 w-8 text-slate-400" />
+                              <p className="mt-2 text-xs text-slate-600">
                                 Drag receipt screenshot or{' '}
-                                <label className="cursor-pointer font-semibold text-sky-300 underline hover:text-sky-200">
+                                <label className="cursor-pointer font-bold text-[#FF7A00] underline">
                                   browse
                                   <input
                                     type="file"
@@ -436,11 +477,11 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
                                 value={paymentRef}
                                 onChange={(e) => setPaymentRef(e.target.value)}
                                 placeholder="Payment reference number"
-                                className="w-full rounded-xl border border-neutral-700 bg-neutral-950/60 px-4 py-2.5 text-sm text-cream placeholder-cream-muted/40 transition-all focus:border-sky-400 focus:bg-neutral-900/60 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+                                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 placeholder-slate-400 focus:border-[#3D1164] focus:outline-none focus:ring-2 focus:ring-[#3D1164]/20"
                               />
                             </div>
                             <Button
-                              className="mt-3.5"
+                              className="mt-3.5 bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
                               fullWidth
                               isLoading={uploading}
                               disabled={!paymentRef.trim()}
@@ -456,27 +497,27 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
                   </div>
                 )}
 
-                {/* Payment Screenshot Display */}
+                {/* Screenshot Verified Badge */}
                 {hasPaymentScreenshot && (
-                  <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6 shadow-xl backdrop-blur-sm">
-                    <h3 className="mb-2 flex items-center gap-2 font-display text-base font-bold text-cream">
-                      <CheckCircle2 className="h-5 w-5 text-accent-300" />
+                  <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-2 flex items-center gap-2 font-display text-base font-bold text-slate-900">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                       Payment Screenshot
                     </h3>
-                    <p className="mb-3.5 text-xs text-cream-muted">
+                    <p className="mb-3.5 text-xs text-slate-500">
                       Your payment screenshot has been submitted and is currently being verified.
                     </p>
-                    <div className="rounded-xl border border-neutral-700 bg-neutral-950/80 p-3">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                       <img
                         src={booking.payment_screenshot_url || undefined}
                         alt="Payment Screenshot"
-                        className="mx-auto max-h-64 rounded-lg object-contain"
+                        className="mx-auto max-h-64 rounded-xl object-contain"
                       />
                     </div>
                     {booking.payment_reference && (
-                      <p className="mt-2.5 text-xs text-cream-muted">
+                      <p className="mt-3 text-xs text-slate-600 font-medium">
                         Reference Number:{' '}
-                        <span className="font-mono font-bold text-sky-300">
+                        <span className="font-mono font-bold text-[#3D1164]">
                           {booking.payment_reference}
                         </span>
                       </p>
@@ -484,25 +525,25 @@ const loadCourts = useBookingStore((state) => state.loadCourts);
                   </div>
                 )}
 
-                {/* Status Callouts - Red free */}
+                {/* Status Banners */}
                 {booking.status === 'confirmed' && (
-                  <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-center text-xs font-semibold text-emerald-300 sm:text-sm">
-                    Your booking is confirmed! See you on the court.
+                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center text-xs font-bold text-emerald-800 sm:text-sm">
+                    Your booking is confirmed! See you at Smash Zone.
                   </div>
                 )}
                 {booking.status === 'completed' && (
-                  <div className="rounded-xl border border-slate-600 bg-slate-800/40 p-4 text-center text-xs font-semibold text-slate-300 sm:text-sm">
-                    Thanks for playing with us! We hope to see you again soon.
+                  <div className="rounded-2xl border border-slate-200 bg-slate-100 p-4 text-center text-xs font-bold text-slate-700 sm:text-sm">
+                    Thanks for playing with us at Smash Zone! See you next time.
                   </div>
                 )}
                 {booking.status === 'cancelled' && (
-                  <div className="rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-center text-xs font-semibold text-neutral-400 sm:text-sm">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-100 p-4 text-center text-xs font-bold text-slate-500 sm:text-sm">
                     This booking has been cancelled.
                   </div>
                 )}
                 {booking.status === 'rejected' && (
-                  <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-4 text-center text-xs font-semibold text-zinc-300 sm:text-sm">
-                    Your payment could not be verified. Please contact court administration.
+                  <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-center text-xs font-bold text-rose-700 sm:text-sm">
+                    Your payment could not be verified. Please contact Smash Zone administration.
                   </div>
                 )}
               </motion.div>

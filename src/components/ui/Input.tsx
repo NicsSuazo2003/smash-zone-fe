@@ -15,29 +15,33 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-cream-muted"
+            className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
             {label}
-            {props.required && <span className="ml-1 text-primary-500">*</span>}
+            {props.required && <span className="ml-1 text-[#FF7A00]">*</span>}
           </label>
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="pointer-events-none absolute left-3.5 flex items-center text-cream-muted/70">
+            <div className="pointer-events-none absolute left-3.5 flex items-center text-slate-400">
               {leftIcon}
             </div>
           )}
           <input
             ref={ref}
             id={inputId}
-            className={`w-full rounded-xl border border-neutral-800 bg-neutral-950/80 px-4 py-2.5 text-sm text-cream placeholder-cream-muted/40 transition-all focus:border-primary-500 focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/25 disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 placeholder-slate-400 shadow-sm transition-all focus:border-[#3D1164] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3D1164]/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 ${
               leftIcon ? 'pl-10' : ''
-            } ${error ? 'border-primary-500 focus:border-primary-500 focus:ring-primary-500/30' : ''} ${className}`}
+            } ${
+              error
+                ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/25'
+                : ''
+            } ${className}`}
             {...props}
           />
         </div>
-        {error && <p className="mt-1.5 text-xs font-medium text-primary-400">{error}</p>}
-        {hint && !error && <p className="mt-1.5 text-xs text-cream-muted/70">{hint}</p>}
+        {error && <p className="mt-1.5 text-xs font-semibold text-rose-600">{error}</p>}
+        {hint && !error && <p className="mt-1.5 text-xs text-slate-500">{hint}</p>}
       </div>
     );
   }
@@ -59,22 +63,24 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-cream-muted"
+            className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700"
           >
             {label}
-            {props.required && <span className="ml-1 text-primary-500">*</span>}
+            {props.required && <span className="ml-1 text-[#FF7A00]">*</span>}
           </label>
         )}
         <textarea
           ref={ref}
           id={inputId}
-          className={`w-full rounded-xl border border-neutral-800 bg-neutral-950/80 p-4 text-sm text-cream placeholder-cream-muted/40 transition-all resize-none focus:border-primary-500 focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500/25 disabled:cursor-not-allowed disabled:opacity-50 ${
-            error ? 'border-primary-500 focus:border-primary-500 focus:ring-primary-500/30' : ''
+          className={`w-full rounded-xl border border-slate-300 bg-white p-4 text-sm font-medium text-slate-900 placeholder-slate-400 shadow-sm transition-all resize-none focus:border-[#3D1164] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3D1164]/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 ${
+            error
+              ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/25'
+              : ''
           } ${className}`}
           {...props}
         />
-        {error && <p className="mt-1.5 text-xs font-medium text-primary-400">{error}</p>}
-        {hint && !error && <p className="mt-1.5 text-xs text-cream-muted/70">{hint}</p>}
+        {error && <p className="mt-1.5 text-xs font-semibold text-rose-600">{error}</p>}
+        {hint && !error && <p className="mt-1.5 text-xs text-slate-500">{hint}</p>}
       </div>
     );
   }

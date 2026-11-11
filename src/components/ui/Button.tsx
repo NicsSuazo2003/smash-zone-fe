@@ -27,35 +27,35 @@ type LinkButtonProps = BaseProps & {
 type Props = ButtonProps | LinkButtonProps;
 
 const variants: Record<Variant, string> = {
-  // Primary: Championship Red CTA with subtle outer glow
+  // Primary: Vibrant Smash Zone Orange CTA with athletic contrast
   primary:
-    'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-glow-primary font-bold border border-primary-400/40 uppercase tracking-wide',
+    'bg-[#FF7A00] text-white hover:bg-[#E56600] active:bg-[#CC5A00] shadow-sm hover:shadow-md font-black uppercase tracking-wider',
 
-  // Secondary: Carbon pitch tile with hairline border
+  // Secondary: Clean white card with slate border, dark text, and purple hover
   secondary:
-    'border border-neutral-700 bg-neutral-900 text-cream hover:border-neutral-500 hover:bg-neutral-800 hover:text-white active:bg-neutral-700 font-medium shadow-sm',
+    'border border-slate-300 bg-white text-slate-800 hover:border-[#3D1164]/40 hover:bg-slate-50 hover:text-[#3D1164] active:bg-slate-100 font-bold shadow-sm',
 
-  // Accent: Optic Gold for high-urgency reservations & live bookings
+  // Accent: Deep Athletic Purple CTA
   accent:
-    'bg-accent-500 text-neutral-950 hover:bg-accent-400 active:bg-accent-600 shadow-glow-accent font-bold border border-accent-300/40 uppercase tracking-wide',
+    'bg-[#3D1164] text-white hover:bg-[#5A1B91] active:bg-[#260B3E] font-black uppercase tracking-wider shadow-sm hover:shadow-md',
 
-  // Ghost: Quiet slate button for inline controls
+  // Ghost: Clean muted slate for subtle inline actions
   ghost:
-    'text-cream-muted hover:text-white hover:bg-neutral-800/60 active:bg-neutral-700/60 font-medium',
+    'text-slate-600 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200 font-bold',
 
-  // Danger: Red wash for cancellations & destructive triggers
+  // Danger: Soft red tint for cancellations and destructive triggers
   danger:
-    'bg-primary-500/15 text-primary-300 border border-primary-500/30 hover:bg-primary-500 hover:text-white active:bg-primary-600 font-semibold',
+    'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-600 hover:text-white active:bg-rose-700 font-bold',
 
-  // Success: Emerald green for confirmations
+  // Success: Mint green tint for confirmations
   success:
-    'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white active:bg-emerald-600 font-semibold',
+    'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white active:bg-emerald-700 font-bold',
 };
 
 const sizes: Record<Size, string> = {
   sm: 'px-3.5 py-1.5 text-xs rounded-lg gap-1.5',
   md: 'px-5 py-2.5 text-sm rounded-xl gap-2',
-  lg: 'px-7 py-3.5 text-base rounded-xl gap-2.5 font-bold',
+  lg: 'px-7 py-3.5 text-base rounded-xl gap-2.5 font-black',
 };
 
 function Spinner() {
@@ -91,7 +91,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
     },
     ref
   ) => {
-    const classes = `inline-flex items-center justify-center select-none transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98] ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`;
+    const classes = `inline-flex items-center justify-center select-none transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7A00]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98] ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`;
 
     if ('to' in rest && rest.to) {
       return (

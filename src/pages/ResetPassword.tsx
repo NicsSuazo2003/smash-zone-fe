@@ -1,4 +1,3 @@
-// src/pages/ResetPassword.tsx
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -67,32 +66,35 @@ export function ResetPassword() {
 
   if (success) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-charcoal">
-        <div className="absolute inset-0">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-50 text-slate-900">
+        <div className="absolute inset-0 pointer-events-none">
           <img
             src={COURT_IMAGES.hero}
             alt=""
-            className="h-full w-full object-cover opacity-20"
+            className="h-full w-full object-cover opacity-10"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-neutral-950/90 to-charcoal" />
-          <div className="absolute inset-0 bg-grid opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-white/80 to-slate-100" />
         </div>
         <div className="relative z-10 w-full max-w-md px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="card p-8 text-center"
+            className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl"
           >
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-500/20">
-              <CheckCircle2 className="h-6 w-6 text-accent-400" />
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
+              <CheckCircle2 className="h-7 w-7" />
             </div>
-            <h1 className="font-display text-lg font-bold text-cream">
-              Password reset
+            <h1 className="font-display text-2xl font-black uppercase tracking-wider text-slate-900">
+              Password Reset
             </h1>
-            <p className="mt-2 text-sm text-cream-muted">
+            <p className="mt-2 text-sm text-slate-600">
               Your password has been changed. Redirecting to sign in…
             </p>
-            <Button size="md" to="/login" className="mt-4">
+            <Button
+              size="md"
+              to="/login"
+              className="mt-5 bg-[#3D1164] hover:bg-[#5A1B91] text-white font-bold"
+            >
               Go to sign in
             </Button>
           </motion.div>
@@ -102,21 +104,20 @@ export function ResetPassword() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-charcoal">
-      <div className="absolute inset-0">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-50 text-slate-900">
+      <div className="absolute inset-0 pointer-events-none">
         <img
           src={COURT_IMAGES.hero}
           alt=""
-          className="h-full w-full object-cover opacity-20"
+          className="h-full w-full object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-neutral-950/90 to-charcoal" />
-        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-white/80 to-slate-100" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md px-4">
+      <div className="relative z-10 w-full max-w-md px-4 py-8">
         <Link
           to="/login"
-          className="mb-6 inline-flex items-center gap-2 text-sm text-cream-muted hover:text-accent-400 transition"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#FF7A00] transition hover:text-[#E56600]"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to sign in
@@ -125,16 +126,16 @@ export function ResetPassword() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="card p-8"
+          className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8"
         >
           <div className="mb-6 text-center">
             <div className="flex justify-center">
-              <Logo size="2xl" to="" withText={false} />
+              <Logo size="xl" to="" withText={false} />
             </div>
-            <h1 className="mt-3 font-display text-lg font-bold text-cream">
-              Set a new password
+            <h1 className="mt-4 font-display text-2xl font-black uppercase tracking-wider text-slate-900">
+              Set a New Password
             </h1>
-            <p className="mt-1 text-xs text-cream-muted">
+            <p className="mt-1 text-xs text-slate-500 font-medium">
               Choose a strong password of at least 8 characters.
             </p>
           </div>
@@ -160,8 +161,8 @@ export function ResetPassword() {
             />
 
             {error && (
-              <div className="flex items-start gap-2 rounded-lg bg-error/10 p-3 text-sm text-error">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+              <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -173,6 +174,7 @@ export function ResetPassword() {
               isLoading={submitting}
               disabled={!token}
               leftIcon={<Shield className="h-5 w-5" />}
+              className="bg-[#3D1164] hover:bg-[#5A1B91] text-white font-black"
             >
               Reset password
             </Button>

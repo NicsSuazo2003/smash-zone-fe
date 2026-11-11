@@ -1,4 +1,3 @@
-// src/pages/admin/Dashboard.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -47,24 +46,24 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
 
 const STATUS_STYLE: Record<string, { chip: string; dot: string; label: string }> = {
   confirmed: {
-    chip: 'bg-accent-500/25 text-accent-300 border border-accent-400/30',
-    dot: 'bg-accent-400',
+    chip: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
+    dot: 'bg-emerald-500',
     label: 'Confirmed',
   },
   pending_payment: {
-    chip: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
-    dot: 'bg-amber-400',
+    chip: 'bg-amber-50 text-amber-800 border border-amber-200',
+    dot: 'bg-amber-500',
     label: 'Pending payment',
   },
   cancelled: {
-    chip: 'bg-red-500/20 text-red-300 border border-red-500/30 line-through',
-    dot: 'bg-red-400',
+    chip: 'bg-slate-100 text-slate-500 border border-slate-200 line-through',
+    dot: 'bg-slate-400',
     label: 'Cancelled',
   },
 };
 const DEFAULT_STATUS_STYLE = {
-  chip: 'bg-primary-500/25 text-primary-200 border border-primary-400/30',
-  dot: 'bg-primary-300',
+  chip: 'bg-purple-50 text-[#3D1164] border border-purple-200',
+  dot: 'bg-[#3D1164]',
   label: 'Other',
 };
 const statusStyle = (status: string) => STATUS_STYLE[status] ?? DEFAULT_STATUS_STYLE;
@@ -113,7 +112,6 @@ export function Dashboard() {
   const [activeBar, setActiveBar] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Date Range State for Analytics
   const [range, setRange] = useState<'last7' | 'thisMonth' | 'custom'>('last7');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
@@ -190,29 +188,29 @@ export function Dashboard() {
       label: 'Total Bookings',
       value: analytics?.total_bookings ?? 0,
       icon: CalendarDays,
-      color: 'text-primary-300',
-      bg: 'bg-primary-500/20 border border-primary-400/30',
+      color: 'text-[#3D1164]',
+      bg: 'bg-purple-50 border border-purple-200',
     },
     {
       label: 'Total Revenue',
       value: formatCurrency(analytics?.total_revenue ?? 0),
       icon: PhilippinePeso,
-      color: 'text-accent-300',
-      bg: 'bg-accent-500/20 border border-accent-400/30',
+      color: 'text-[#FF7A00]',
+      bg: 'bg-orange-50 border border-orange-200',
     },
     {
       label: 'Completed Bookings',
       value: analytics?.completed_bookings ?? 0,
       icon: CheckCircle2,
-      color: 'text-sky-300',
-      bg: 'bg-sky-500/20 border border-sky-400/30',
+      color: 'text-emerald-700',
+      bg: 'bg-emerald-50 border border-emerald-200',
     },
     {
       label: 'Pending Payments',
       value: pendingCount,
       icon: Clock,
-      color: 'text-amber-300',
-      bg: 'bg-amber-500/20 border border-amber-400/30',
+      color: 'text-amber-800',
+      bg: 'bg-amber-50 border border-amber-200',
       needsAction: pendingCount > 0,
     },
   ];
@@ -224,29 +222,37 @@ export function Dashboard() {
 
   return (
     <AdminLayout>
-      <div className="container-page py-6 sm:py-8 text-cream">
+      <div className="container-page py-6 sm:py-8 text-slate-900">
         <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 sm:flex-row sm:items-center">
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-cream sm:text-3xl">
+            <h1 className="font-display text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
               Dashboard
             </h1>
-            <p className="mt-1 text-xs text-cream-muted sm:text-sm">
-              Overview of your court bookings and revenue
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+              Overview of court bookings and facility revenue at Smash Zone
             </p>
           </div>
-          
+
           {/* Date Range Filter */}
-          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-900/80 p-1.5 shadow-sm">
-            <CalendarIcon className="ml-2 h-4 w-4 text-primary-300 hidden sm:block" />
+          <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xs">
+            <CalendarIcon className="ml-2 h-4 w-4 text-slate-400 hidden sm:block" />
             <button
               onClick={() => handleApplyRange('last7')}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${range === 'last7' ? 'bg-primary-500 text-white' : 'text-cream-muted hover:text-cream'}`}
+              className={`rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                range === 'last7'
+                  ? 'bg-[#3D1164] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
             >
               Last 7 Days
             </button>
             <button
               onClick={() => handleApplyRange('thisMonth')}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${range === 'thisMonth' ? 'bg-primary-500 text-white' : 'text-cream-muted hover:text-cream'}`}
+              className={`rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                range === 'thisMonth'
+                  ? 'bg-[#3D1164] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
             >
               This Month
             </button>
@@ -255,18 +261,22 @@ export function Dashboard() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="rounded-lg border border-neutral-600 bg-neutral-950 px-2 py-1 text-xs text-cream [color-scheme:dark] outline-none focus:border-primary-500"
+                className="rounded-xl border border-slate-300 bg-white px-2 py-1 text-xs text-slate-800 outline-none focus:border-[#3D1164]"
               />
-              <span className="text-cream-muted text-xs">-</span>
+              <span className="text-slate-400 text-xs">-</span>
               <input
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="rounded-lg border border-neutral-600 bg-neutral-950 px-2 py-1 text-xs text-cream [color-scheme:dark] outline-none focus:border-primary-500"
+                className="rounded-xl border border-slate-300 bg-white px-2 py-1 text-xs text-slate-800 outline-none focus:border-[#3D1164]"
               />
               <button
                 onClick={() => handleApplyRange('custom', customStart, customEnd)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${range === 'custom' ? 'bg-accent-500 text-neutral-950' : 'bg-neutral-800 text-cream-muted hover:text-cream'}`}
+                className={`rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                  range === 'custom'
+                    ? 'bg-[#FF7A00] text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
               >
                 Apply
               </button>
@@ -277,18 +287,18 @@ export function Dashboard() {
         {pendingCount > 0 && (
           <Link
             to={ADMIN_BOOKINGS_PATH}
-            className="mb-6 flex items-center gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 transition hover:border-amber-400/70 hover:bg-amber-500/15 sm:mb-8"
+            className="mb-6 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 transition hover:bg-amber-100/70 sm:mb-8 shadow-xs"
           >
-            <AlertCircle className="h-5 w-5 shrink-0 text-amber-300" />
+            <AlertCircle className="h-5 w-5 shrink-0 text-amber-600" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-amber-200">
+              <p className="text-sm font-bold text-amber-950">
                 {pendingCount} booking{pendingCount !== 1 ? 's' : ''} waiting for payment verification
               </p>
-              <p className="text-xs text-cream-muted">
-                Customers can&apos;t get confirmed until you review these.
+              <p className="text-xs text-amber-800">
+                Review and approve receipts to finalize court slots.
               </p>
             </div>
-            <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-amber-200">
+            <span className="flex shrink-0 items-center gap-1 text-xs font-black text-[#FF7A00]">
               Review
               <ChevronRight className="h-4 w-4" />
             </span>
@@ -304,21 +314,21 @@ export function Dashboard() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className={`card rounded-2xl border bg-neutral-900/80 p-4 sm:p-5 shadow-xl backdrop-blur-sm ${
-                  stat.needsAction ? 'border-amber-500/40' : 'border-neutral-700'
+                className={`rounded-3xl border bg-white p-5 shadow-xs transition hover:shadow-md ${
+                  stat.needsAction ? 'border-amber-300' : 'border-slate-200'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div
-                    className={`flex h-11 w-11 items-center justify-center rounded-xl shadow-inner ${stat.bg}`}
+                    className={`flex h-11 w-11 items-center justify-center rounded-2xl ${stat.bg}`}
                   >
                     <Icon className={`h-5 w-5 ${stat.color}`} />
                   </div>
                 </div>
-                <p className="mt-3 text-2xl font-extrabold text-cream sm:text-3xl tracking-tight">
+                <p className="mt-4 text-2xl font-black text-slate-900 sm:text-3xl tracking-tight">
                   {statsLoading ? '—' : stat.value}
                 </p>
-                <p className="text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
                   {stat.label}
                 </p>
               </motion.div>
@@ -327,18 +337,18 @@ export function Dashboard() {
         </div>
 
         {revenueDays.length > 0 && (
-          <div className="mb-6 card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:mb-8 sm:p-6">
+          <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:mb-8 sm:p-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary-300" />
-                <h2 className="font-display text-base font-bold text-cream sm:text-lg">
+                <TrendingUp className="h-5 w-5 text-[#FF7A00]" />
+                <h2 className="font-display text-base font-bold text-slate-900 sm:text-lg">
                   Revenue Trend
-                  <span className="ml-1.5 text-xs font-medium text-cream-muted sm:text-sm">
+                  <span className="ml-1.5 text-xs font-semibold text-slate-400 sm:text-sm">
                     ({revenueDays.length} day{revenueDays.length !== 1 ? 's' : ''})
                   </span>
                 </h2>
               </div>
-              <p className="text-xs text-cream-muted sm:text-sm" aria-live="polite">
+              <p className="text-xs text-slate-500 sm:text-sm" aria-live="polite">
                 {activeDay ? (
                   <>
                     {new Date(activeDay.date + 'T00:00:00').toLocaleDateString('en-US', {
@@ -346,14 +356,14 @@ export function Dashboard() {
                       day: 'numeric',
                     })}
                     :{' '}
-                    <span className="font-bold text-primary-200">
+                    <span className="font-black text-[#FF7A00]">
                       {formatCurrency(activeDay.revenue)}
                     </span>
                   </>
                 ) : (
                   <>
                     Period total:{' '}
-                    <span className="font-bold text-primary-200">{formatCurrency(periodTotal)}</span>
+                    <span className="font-black text-[#3D1164]">{formatCurrency(periodTotal)}</span>
                     <span className="hidden sm:inline"> · tap a bar for details</span>
                   </>
                 )}
@@ -378,18 +388,18 @@ export function Dashboard() {
                       aria-label={`${dayLabel}: ${formatCurrency(day.revenue)}`}
                       className="flex min-w-[52px] flex-1 flex-col items-center gap-1.5"
                     >
-                      <span className="hidden text-[11px] font-bold text-primary-200 whitespace-nowrap sm:block">
+                      <span className="hidden text-[11px] font-bold text-slate-700 whitespace-nowrap sm:block">
                         {day.revenue > 0 ? formatCurrency(day.revenue) : '—'}
                       </span>
                       <div className="flex w-full flex-1 items-end">
                         <div
-                          className={`w-full rounded-t-lg bg-gradient-to-t from-primary-600 via-primary-500 to-primary-400 transition-all shadow-sm ${
-                            isActive ? 'ring-2 ring-white/70' : 'hover:from-primary-500 hover:to-primary-300'
+                          className={`w-full rounded-t-xl bg-gradient-to-t from-[#3D1164] via-[#5A1B91] to-[#FF7A00] transition-all shadow-xs ${
+                            isActive ? 'ring-2 ring-[#FF7A00]' : 'opacity-85 hover:opacity-100'
                           }`}
-                          style={{ height: `${Math.max(heightPct, 3)}%` }}
+                          style={{ height: `${Math.max(heightPct, 4)}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-medium text-cream-muted whitespace-nowrap sm:text-[11px]">
+                      <span className="text-[10px] font-semibold text-slate-500 whitespace-nowrap sm:text-[11px]">
                         {dayLabel}
                       </span>
                     </button>
@@ -400,9 +410,9 @@ export function Dashboard() {
           </div>
         )}
 
-        <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 shadow-xl backdrop-blur-sm sm:p-6">
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs sm:p-6">
           <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="font-display text-base font-bold text-cream sm:text-lg">
+            <h2 className="font-display text-base font-bold text-slate-900 sm:text-lg">
               Bookings {view === 'calendar' ? 'Calendar' : 'List'}
             </h2>
             <div className="flex flex-wrap items-center gap-2">
@@ -410,38 +420,37 @@ export function Dashboard() {
                 <div className="mr-1 flex items-center gap-1 sm:mr-2">
                   <button
                     onClick={() => setCalendarDate(new Date(year, month - 1, 1))}
-                    className="rounded-lg border border-neutral-700 bg-neutral-800/80 p-1.5 text-cream-muted transition hover:border-primary-400 hover:text-primary-300"
+                    className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:bg-slate-100"
                     aria-label="Previous month"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
-                  <span className="min-w-[110px] text-center text-xs font-bold text-cream sm:min-w-32 sm:text-sm">
+                  <span className="min-w-[110px] text-center text-xs font-bold text-slate-900 sm:min-w-32 sm:text-sm">
                     {monthNames[month]} {year}
                   </span>
                   <button
                     onClick={() => setCalendarDate(new Date(year, month + 1, 1))}
-                    className="rounded-lg border border-neutral-700 bg-neutral-800/80 p-1.5 text-cream-muted transition hover:border-primary-400 hover:text-primary-300"
+                    className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:bg-slate-100"
                     aria-label="Next month"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                   <button
                     onClick={goToToday}
-                    className="ml-1 rounded-lg border border-neutral-700 bg-neutral-800/80 px-2.5 py-1.5 text-xs font-semibold text-cream-muted transition hover:border-primary-400 hover:text-primary-300"
+                    className="ml-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100"
                   >
                     Today
                   </button>
                 </div>
               )}
-              <div className="flex rounded-xl border border-neutral-700 bg-neutral-950/60 p-1" role="group" aria-label="Switch view">
+              <div className="flex rounded-2xl border border-slate-200 bg-slate-50 p-1" role="group" aria-label="Switch view">
                 <button
                   onClick={() => setView('calendar')}
-                  aria-label="Calendar view"
                   aria-pressed={view === 'calendar'}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition ${
                     view === 'calendar'
-                      ? 'bg-primary-500 text-white shadow-glow-blue'
-                      : 'text-cream-muted hover:text-cream'
+                      ? 'bg-[#3D1164] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
@@ -449,12 +458,11 @@ export function Dashboard() {
                 </button>
                 <button
                   onClick={() => setView('list')}
-                  aria-label="List view"
                   aria-pressed={view === 'list'}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition ${
                     view === 'list'
-                      ? 'bg-primary-500 text-white shadow-glow-blue'
-                      : 'text-cream-muted hover:text-cream'
+                      ? 'bg-[#3D1164] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <List className="h-3.5 w-3.5" />
@@ -468,7 +476,7 @@ export function Dashboard() {
             <LoadingSpinner className="py-14" />
           ) : view === 'calendar' ? (
             <div>
-              <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-cream-muted">
+              <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 font-medium">
                 {Object.entries(STATUS_STYLE).map(([key, s]) => (
                   <span key={key} className="flex items-center gap-1.5">
                     <span className={`h-2 w-2 rounded-full ${s.dot}`} />
@@ -481,7 +489,7 @@ export function Dashboard() {
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
                   <div
                     key={d}
-                    className="py-1 text-center text-[11px] font-bold uppercase tracking-wider text-cream-muted sm:py-2 sm:text-xs"
+                    className="py-1 text-center text-[11px] font-bold uppercase tracking-wider text-slate-400 sm:py-2 sm:text-xs"
                   >
                     <span className="hidden sm:inline">{d}</span>
                     <span className="sm:hidden">{d[0]}</span>
@@ -505,31 +513,28 @@ export function Dashboard() {
                       key={iso}
                       onClick={() => selectDate(iso)}
                       aria-pressed={isSelected}
-                      aria-label={`${formatDate(iso)}: ${activeBookings.length} booking${
-                        activeBookings.length !== 1 ? 's' : ''
-                      }${hasPending ? ', has pending payments' : ''}`}
-                      className={`min-h-[56px] rounded-xl border p-1 text-left transition sm:min-h-24 sm:p-2 ${
+                      className={`min-h-[56px] rounded-2xl border p-1 text-left transition sm:min-h-24 sm:p-2 ${
                         isSelected
-                          ? 'border-primary-400 bg-primary-500/20 shadow-glow-blue'
+                          ? 'border-[#3D1164] bg-purple-50 shadow-xs'
                           : isCurrentMonth
                             ? hasPending
-                              ? 'border-amber-500/40 bg-neutral-950/60 hover:border-amber-400/70'
-                              : 'border-neutral-700 bg-neutral-950/60 hover:border-primary-400/50 hover:bg-neutral-800/60'
-                            : 'border-neutral-800/50 bg-neutral-950/20 opacity-50'
+                              ? 'border-amber-300 bg-amber-50/50 hover:bg-amber-50'
+                              : 'border-slate-200 bg-white hover:bg-slate-50'
+                            : 'border-slate-100 bg-slate-50/50 opacity-40'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <span
                           className={`text-xs font-bold ${
                             isToday
-                              ? 'flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-white font-black'
-                              : 'text-cream'
+                              ? 'flex h-5 w-5 items-center justify-center rounded-full bg-[#FF7A00] text-white font-black'
+                              : 'text-slate-800'
                           }`}
                         >
                           {day.getDate()}
                         </span>
                         {activeBookings.length > 0 && (
-                          <span className="rounded-full border border-primary-400/40 bg-primary-500/30 px-1.5 text-[10px] font-black text-primary-200">
+                          <span className="rounded-full border border-purple-200 bg-purple-100 px-1.5 text-[10px] font-black text-[#3D1164]">
                             {activeBookings.length}
                           </span>
                         )}
@@ -548,14 +553,14 @@ export function Dashboard() {
                           return (
                             <div
                               key={bookingKey(b, i)}
-                              className={`truncate rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${statusStyle(b.status).chip}`}
+                              className={`truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold ${statusStyle(b.status).chip}`}
                             >
                               {start} {first}
                             </div>
                           );
                         })}
                         {dayBookings.length > 2 && (
-                          <div className="pl-0.5 text-[10px] font-semibold text-primary-300">
+                          <div className="pl-0.5 text-[10px] font-bold text-[#FF7A00]">
                             +{dayBookings.length - 2} more
                           </div>
                         )}
@@ -568,17 +573,17 @@ export function Dashboard() {
               {selectedDate && (
                 <div
                   ref={drawerRef}
-                  className="mt-5 scroll-mt-20 border-t border-neutral-700 pt-4 sm:mt-6 sm:pt-5"
+                  className="mt-6 scroll-mt-20 border-t border-slate-200 pt-5"
                 >
-                  <h3 className="mb-3 text-sm font-bold text-primary-300">
+                  <h3 className="mb-3 text-sm font-bold text-slate-900">
                     {formatDate(selectedDate)}
-                    <span className="ml-2 font-medium text-cream-muted">
+                    <span className="ml-2 font-normal text-slate-500">
                       {selectedDateBookings.length} booking
                       {selectedDateBookings.length !== 1 ? 's' : ''}
                     </span>
                   </h3>
                   {selectedDateBookings.length === 0 ? (
-                    <p className="py-6 text-center text-xs font-medium text-cream-muted sm:text-sm">
+                    <p className="py-6 text-center text-xs font-medium text-slate-400 sm:text-sm">
                       No bookings for this date.
                     </p>
                   ) : (
@@ -605,10 +610,10 @@ export function Dashboard() {
                       key={f.key}
                       onClick={() => setStatusFilter(f.key)}
                       aria-pressed={active}
-                      className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                      className={`shrink-0 rounded-2xl border px-3.5 py-1.5 text-xs font-bold transition ${
                         active
-                          ? 'border-primary-400 bg-primary-500 text-white'
-                          : 'border-neutral-600 bg-neutral-800/80 text-cream-muted hover:text-cream'
+                          ? 'border-[#3D1164] bg-[#3D1164] text-white'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                       }`}
                     >
                       {f.label} <span className="opacity-70">({count})</span>
@@ -619,7 +624,7 @@ export function Dashboard() {
 
               <div className="space-y-2.5">
                 {filteredList.length === 0 ? (
-                  <p className="py-8 text-center text-sm font-medium text-cream-muted">
+                  <p className="py-8 text-center text-sm font-medium text-slate-400">
                     {bookings.length === 0
                       ? 'No bookings yet. New reservations will appear here.'
                       : 'No bookings match this filter.'}
@@ -635,7 +640,7 @@ export function Dashboard() {
                 <div className="mt-4 text-center">
                   <button
                     onClick={() => setVisibleCount((c) => c + LIST_PAGE_SIZE)}
-                    className="rounded-xl border border-neutral-600 bg-neutral-800/80 px-4 py-2 text-xs font-semibold text-cream-muted transition hover:border-primary-400 hover:text-primary-300"
+                    className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-xs transition hover:bg-slate-50"
                   >
                     Show more ({filteredList.length - visibleCount} left)
                   </button>
@@ -673,17 +678,17 @@ function BookingRow({
   const slotDisplay = b.slots?.map((s: any) => formatSlotTime(s)).join(', ') || 'No slots';
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-neutral-700 bg-neutral-950/70 p-3.5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5 sm:flex-row sm:items-center sm:justify-between shadow-xs">
       <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-10 min-w-[3.5rem] shrink-0 items-center justify-center rounded-xl border border-primary-400/30 bg-primary-500/20 px-2 text-xs font-black text-primary-200">
+        <div className="flex h-10 min-w-[3.5rem] shrink-0 items-center justify-center rounded-xl bg-purple-100 text-xs font-black text-[#3D1164]">
           {firstStart(b) ? formatTimeShort(firstStart(b)) : 'N/A'}
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-cream">{customerName(b)}</p>
-          <p className="truncate text-xs text-cream-muted">
+          <p className="truncate text-sm font-bold text-slate-900">{customerName(b)}</p>
+          <p className="truncate text-xs text-slate-500 font-medium">
             {showReference && (
               <>
-                <span className="font-mono text-primary-300">{b.reference_code || 'No ref'}</span> ·{' '}
+                <span className="font-mono font-bold text-[#3D1164]">{b.reference_code || 'No ref'}</span> ·{' '}
               </>
             )}
             {showDate && <>{formatDate(b.date)} · </>}
@@ -692,7 +697,7 @@ function BookingRow({
         </div>
       </div>
       <div className="flex items-center justify-between gap-3 sm:justify-end">
-        <span className="text-sm font-bold text-accent-400">
+        <span className="text-sm font-black text-[#FF7A00]">
           {formatCurrency(b.total_amount || 0)}
         </span>
         <StatusBadge status={b.status} size="sm" />

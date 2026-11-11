@@ -327,7 +327,7 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
     try {
       await removePricingRule(courtId, rule.id);
     } catch {
-      // Store surfaces error
+      // Handled in store
     }
   };
 
@@ -353,10 +353,10 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
       <div key={title}>
         <div className="mb-2 flex items-center gap-2">
           {icon}
-          <span className="text-[11px] font-bold uppercase tracking-wider text-primary-400">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#3D1164]">
             {title}
           </span>
-          <div className="h-px flex-1 bg-neutral-800" />
+          <div className="h-px flex-1 bg-slate-200" />
         </div>
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
           {intervals.map((it) => {
@@ -366,10 +366,10 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                 key={`${it.start_time}-${it.end_time}`}
                 type="button"
                 onClick={() => handleSlotClick(it)}
-                className={`flex h-9 items-center justify-center rounded-lg border px-1.5 text-[11px] font-semibold tracking-tight transition-all ${
+                className={`flex h-9 items-center justify-center rounded-xl border px-1.5 text-[11px] font-bold tracking-tight transition-all active:scale-95 ${
                   active
-                    ? 'border-accent-400 bg-accent-500 text-neutral-950 shadow-glow-accent'
-                    : 'border-neutral-800 bg-neutral-950/80 text-cream-muted hover:border-primary-500/50 hover:text-cream'
+                    ? 'border-[#FF7A00] bg-[#FF7A00] text-white shadow-xs'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-[#3D1164]/40 hover:bg-slate-50'
                 }`}
               >
                 {formatTimeShort(it.start_time)}–{formatTimeShort(it.end_time)}
@@ -382,13 +382,13 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
   };
 
   return (
-    <div className="mt-5 border-t border-neutral-800 pt-4">
+    <div className="mt-5 border-t border-slate-200 pt-4 text-slate-900">
       <div className="mb-3 flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-primary-400">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#3D1164]">
             Day-Based Pricing Rules
           </p>
-          <p className="text-[11px] text-cream-muted">
+          <p className="text-[11px] text-slate-500">
             Override the base rate for specific days and time windows.
           </p>
         </div>
@@ -397,14 +397,15 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
           variant="secondary"
           leftIcon={<Plus className="h-3.5 w-3.5" />}
           onClick={openCreate}
+          className="bg-white border-slate-300 text-slate-800 hover:bg-slate-50"
         >
           Add Rule
         </Button>
       </div>
 
       {rules.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/40 p-4 text-center text-xs text-cream-muted">
-          No rules yet. Base and peak rates above apply to all slots.
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-5 text-center text-xs text-slate-500">
+          No rules yet. Base and peak rates apply to all slots.
         </div>
       ) : (
         <div className="space-y-2">
@@ -414,44 +415,44 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
             .map((rule) => (
               <div
                 key={rule.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-neutral-950/80 px-3.5 py-2.5 transition hover:border-neutral-700"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-xs hover:border-slate-300"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <Tag className="h-3.5 w-3.5 shrink-0 text-primary-500" />
-                    <span className="truncate text-sm font-bold text-cream">
+                    <Tag className="h-4 w-4 shrink-0 text-[#FF7A00]" />
+                    <span className="truncate text-sm font-bold text-slate-900">
                       {rule.label}
                     </span>
                     {rule.priority > 0 && (
-                      <span className="rounded-md border border-primary-500/30 bg-primary-500/10 px-1.5 py-0.5 text-[9px] font-bold text-primary-300">
+                      <span className="rounded-md border border-purple-200 bg-purple-50 px-2 py-0.5 text-[9px] font-bold text-[#3D1164]">
                         P{rule.priority}
                       </span>
                     )}
                   </div>
-                  <p className="mt-0.5 text-[11px] text-cream-muted">
+                  <p className="mt-0.5 text-[11px] text-slate-500 font-medium">
                     {formatDays(rule.days)} · {formatTimeShort(rule.start_time)}–
                     {rule.end_time === '00:00' ? '12:00 AM' : formatTimeShort(rule.end_time)}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="font-display text-base font-bold text-accent-500">
+                  <p className="font-display text-base font-extrabold text-[#FF7A00]">
                     {formatCurrency(rule.price_per_hour)}
-                    <span className="text-[10px] font-normal text-cream-muted">/hr</span>
+                    <span className="text-[10px] font-normal text-slate-400">/hr</span>
                   </p>
                 </div>
 
-                <div className="flex gap-1">
+                <div className="flex gap-1.5">
                   <button
                     onClick={() => openEdit(rule)}
-                    className="rounded-lg border border-neutral-700 bg-neutral-900 p-1.5 text-cream-muted transition hover:border-primary-500 hover:text-primary-400 active:scale-95"
+                    className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:border-[#3D1164] hover:text-[#3D1164] active:scale-95 shadow-xs"
                     title="Edit rule"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => handleDelete(rule)}
-                    className="rounded-lg border border-neutral-700 bg-neutral-900 p-1.5 text-cream-muted transition hover:border-primary-500 hover:text-primary-400 active:scale-95"
+                    className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:border-rose-400 hover:text-rose-600 active:scale-95 shadow-xs"
                     title="Delete rule"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -479,21 +480,21 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
                   Days
                 </p>
-                <div className="flex gap-2 text-[11px]">
+                <div className="flex gap-3 text-[11px] font-semibold">
                   <button
                     type="button"
                     onClick={selectEveryDay}
-                    className="text-primary-400 underline hover:text-primary-300"
+                    className="text-[#FF7A00] underline hover:text-[#E56600]"
                   >
                     Every day
                   </button>
                   <button
                     type="button"
                     onClick={clearDays}
-                    className="text-cream-muted underline hover:text-cream"
+                    className="text-slate-500 underline hover:text-slate-800"
                   >
                     Clear
                   </button>
@@ -507,10 +508,10 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                       key={d.key}
                       type="button"
                       onClick={() => toggleDay(d.key)}
-                      className={`min-w-[52px] rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
+                      className={`min-w-[52px] rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
                         isSelected
-                          ? 'border-primary-500 bg-primary-500 text-white shadow-glow-primary'
-                          : 'border-neutral-800 bg-neutral-950/80 text-cream-muted hover:border-primary-500/40 hover:text-cream'
+                          ? 'border-[#3D1164] bg-[#3D1164] text-white shadow-xs'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       {d.label}
@@ -518,45 +519,45 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                   );
                 })}
               </div>
-              <p className="mt-1.5 text-[11px] text-cream-muted">
+              <p className="mt-1.5 text-[11px] text-slate-500">
                 Leave all unselected to apply this rule to <strong>every day</strong>.
               </p>
             </div>
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
                   Time Range
                 </p>
                 <button
                   type="button"
                   onClick={() => setManualMode((m) => !m)}
-                  className="text-[11px] text-primary-400 underline hover:text-primary-300"
+                  className="text-[11px] font-semibold text-[#FF7A00] underline hover:text-[#E56600]"
                 >
                   {manualMode ? 'Pick from slots' : 'Enter manually'}
                 </button>
               </div>
 
-              <div className="mb-3 rounded-lg border border-primary-500/20 bg-primary-500/5 p-3">
+              <div className="mb-3 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
                 <div className="flex items-center gap-2 text-xs">
-                  <Clock className="h-3.5 w-3.5 shrink-0 text-primary-400" />
+                  <Clock className="h-4 w-4 shrink-0 text-[#FF7A00]" />
                   {form.start_time && form.end_time ? (
-                    <span className="font-semibold text-cream">
+                    <span className="font-bold text-slate-900">
                       {formatRange(form.start_time, form.end_time)}
                     </span>
                   ) : (
-                    <span className="text-cream-muted">
+                    <span className="text-slate-500">
                       Tap a slot to set the start, then tap later slots to extend.
                     </span>
                   )}
                 </div>
 
                 {!manualMode && allIntervals.length > 0 && (
-                  <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  <div className="mt-3 flex flex-wrap gap-1.5">
                     <button
                       type="button"
                       onClick={selectWholeDay}
-                      className="rounded-lg border border-primary-500/30 bg-primary-500/10 px-2.5 py-1 text-[11px] font-semibold text-primary-300 transition hover:bg-primary-500/20"
+                      className="rounded-xl border border-purple-200 bg-purple-50 px-3 py-1 text-[11px] font-bold text-[#3D1164] transition hover:bg-purple-100"
                     >
                       Whole day
                     </button>
@@ -564,7 +565,7 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                       <button
                         type="button"
                         onClick={selectMorning}
-                        className="rounded-lg border border-neutral-800 bg-neutral-950/80 px-2.5 py-1 text-[11px] text-cream-muted transition hover:border-primary-500/40 hover:text-cream"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-50 shadow-xs"
                       >
                         Morning
                       </button>
@@ -573,7 +574,7 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                       <button
                         type="button"
                         onClick={selectAfternoon}
-                        className="rounded-lg border border-neutral-800 bg-neutral-950/80 px-2.5 py-1 text-[11px] text-cream-muted transition hover:border-primary-500/40 hover:text-cream"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-50 shadow-xs"
                       >
                         Afternoon
                       </button>
@@ -582,7 +583,7 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                       <button
                         type="button"
                         onClick={selectEvening}
-                        className="rounded-lg border border-neutral-800 bg-neutral-950/80 px-2.5 py-1 text-[11px] text-cream-muted transition hover:border-primary-500/40 hover:text-cream"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-50 shadow-xs"
                       >
                         Evening
                       </button>
@@ -590,7 +591,7 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                     <button
                       type="button"
                       onClick={clearRange}
-                      className="rounded-lg border border-neutral-800 bg-neutral-950/80 px-2.5 py-1 text-[11px] text-cream-muted transition hover:text-primary-400"
+                      className="rounded-xl border border-transparent px-3 py-1 text-[11px] font-semibold text-slate-500 hover:text-rose-600"
                     >
                       Clear
                     </button>
@@ -614,35 +615,35 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                   />
                 </div>
               ) : loadingSlots ? (
-                <div className="rounded-xl border border-neutral-800 bg-neutral-950/40 py-6 text-center">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 py-6 text-center">
                   <LoadingSpinner />
                 </div>
               ) : allIntervals.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-950/40 p-4 text-center text-xs text-cream-muted">
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-500">
                   No time slots found for this court.{' '}
                   <button
                     type="button"
                     onClick={() => setManualMode(true)}
-                    className="text-primary-400 underline"
+                    className="font-bold text-[#FF7A00] underline"
                   >
                     Enter manually
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4 rounded-xl border border-neutral-800 bg-neutral-950/40 p-3.5">
+                <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   {renderSlotGroup(
                     'Morning',
-                    <CloudSun className="h-3.5 w-3.5 text-primary-400" />,
+                    <CloudSun className="h-4 w-4 text-[#FF7A00]" />,
                     morning
                   )}
                   {renderSlotGroup(
                     'Afternoon',
-                    <Sun className="h-3.5 w-3.5 text-primary-400" />,
+                    <Sun className="h-4 w-4 text-[#FFA81A]" />,
                     afternoon
                   )}
                   {renderSlotGroup(
                     'Evening',
-                    <Moon className="h-3.5 w-3.5 text-primary-400" />,
+                    <Moon className="h-4 w-4 text-[#3D1164]" />,
                     evening
                   )}
                 </div>
@@ -664,7 +665,7 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
                   });
                 }}
                 onFocus={(e) => e.target.select()}
-                leftIcon={<span className="text-xs font-bold text-accent-500">₱</span>}
+                leftIcon={<span className="text-xs font-bold text-[#FF7A00]">₱</span>}
               />
               <Input
                 label="Priority"
@@ -685,17 +686,18 @@ export function PricingRulesEditor({ courtId }: { courtId: string }) {
             </div>
 
             {localError && (
-              <div className="rounded-xl border border-primary-500/30 bg-primary-500/10 p-2.5 text-xs text-primary-400 font-medium">
+              <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 font-semibold">
                 {localError}
               </div>
             )}
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 pt-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 pt-2">
               <Button
                 size="md"
                 fullWidth
                 isLoading={saving}
                 onClick={handleSubmit}
+                className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
               >
                 {form.id ? 'Save Changes' : 'Create Rule'}
               </Button>

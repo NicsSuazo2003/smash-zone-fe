@@ -1,4 +1,3 @@
-// src/pages/admin/Bookings.tsx
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import {
@@ -39,10 +38,6 @@ import {
   formatDateTime,
 } from '@/utils/format';
 import type { Booking, BookingStatus, RescheduleBookingResult } from '@/types';
-
-/* ────────────────────────────────────────────────────────────────────────── */
-/* Config                                                                     */
-/* ────────────────────────────────────────────────────────────────────────── */
 
 const PAGE_SIZE = 15;
 
@@ -92,13 +87,12 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
     {
       to: 'confirmed',
       label: 'Mark paid & confirm',
-      helper: 'Use only if you already received payment (cash on-site or GCash outside the app).',
+      helper: 'Use only if payment was already received directly.',
       variant: 'success',
       icon: <CheckCircle2 className="h-4 w-4" />,
       confirm: {
         title: 'Confirm without payment proof?',
-        message:
-          'This confirms the booking without verifying a payment in the app. Only continue if you have already received the money.',
+        message: 'This confirms the court slot directly. Only continue if money was received.',
         confirmLabel: 'Mark paid & confirm',
       },
     },
@@ -110,7 +104,7 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
       icon: <Clock className="h-4 w-4" />,
       confirm: {
         title: 'Mark as expired?',
-        message: 'The time slot will be released for other customers. This cannot be undone.',
+        message: 'The court slot will be released for others.',
         confirmLabel: 'Mark expired',
       },
     },
@@ -122,7 +116,7 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
       icon: <XCircle className="h-4 w-4" />,
       confirm: {
         title: 'Cancel this booking?',
-        message: 'The slot will be released. This cannot be undone.',
+        message: 'The slot will be released immediately.',
         confirmLabel: 'Cancel booking',
         askReason: true,
       },
@@ -132,24 +126,24 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
     {
       to: 'confirmed',
       label: 'Approve payment',
-      helper: 'Payment proof looks valid. Confirms the booking.',
+      helper: 'Payment reference and receipt match. Confirms the court.',
       variant: 'success',
       icon: <CheckCircle2 className="h-4 w-4" />,
       confirm: {
         title: 'Approve this payment?',
-        message: 'Make sure the amount and reference number match what you received.',
+        message: 'Make sure the amount and reference number match your GCash/Bank records.',
         confirmLabel: 'Approve & confirm',
       },
     },
     {
       to: 'rejected',
       label: 'Reject payment',
-      helper: 'Proof is invalid or the amount is wrong. The slot is released.',
+      helper: 'Proof is invalid or amount is incorrect. Slot is released.',
       variant: 'danger',
       icon: <XCircle className="h-4 w-4" />,
       confirm: {
         title: 'Reject this payment?',
-        message: 'The booking will be rejected and the slot released. This cannot be undone.',
+        message: 'The reservation will be rejected and the court released.',
         confirmLabel: 'Reject payment',
         askReason: true,
       },
@@ -159,27 +153,26 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
     {
       to: 'completed',
       label: 'Mark completed',
-      helper: 'The customer has played. Available once the booking date arrives.',
+      helper: 'The customer has finished playing.',
       variant: 'primary',
       icon: <CheckCircle2 className="h-4 w-4" />,
       requiresStarted: true,
       confirm: {
         title: 'Mark as completed?',
-        message: 'The booking will be closed as completed.',
+        message: 'The court booking will be closed as completed.',
         confirmLabel: 'Mark completed',
       },
     },
     {
       to: 'refunded',
       label: 'Mark as refunded',
-      helper: 'Records that money was returned. Send the refund via GCash/cash first.',
+      helper: 'Records that money was returned. Send refund via GCash first.',
       variant: 'secondary',
       icon: <RotateCcw className="h-4 w-4" />,
       adminOnly: true,
       confirm: {
         title: 'Mark as refunded?',
-        message:
-          'This only updates the status – it does NOT send money. Return the payment to the customer first.',
+        message: 'This only updates the system status. Return payment via GCash/cash directly.',
         confirmLabel: 'Mark as refunded',
         askReason: true,
       },
@@ -187,13 +180,12 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
     {
       to: 'cancelled',
       label: 'Cancel booking',
-      helper: 'Calls off a paid booking. If the customer paid, mark it as refunded instead.',
+      helper: 'Calls off a paid booking.',
       variant: 'danger',
       icon: <XCircle className="h-4 w-4" />,
       confirm: {
         title: 'Cancel this paid booking?',
-        message:
-          'This booking is already confirmed. If the customer paid and should get their money back, use "Mark as refunded" instead.',
+        message: 'This booking is confirmed. If money was returned, mark as refunded instead.',
         confirmLabel: 'Cancel booking',
         askReason: true,
       },
@@ -203,14 +195,13 @@ const ACTIONS: Partial<Record<BookingStatus, ActionDef[]>> = {
     {
       to: 'refunded',
       label: 'Mark as refunded',
-      helper: 'Records that money was returned. Send the refund via GCash/cash first.',
+      helper: 'Records that money was returned after completion.',
       variant: 'secondary',
       icon: <RotateCcw className="h-4 w-4" />,
       adminOnly: true,
       confirm: {
         title: 'Mark as refunded?',
-        message:
-          'This only updates the status – it does NOT send money. Return the payment to the customer first.',
+        message: 'Return funds to the customer before recording this status.',
         confirmLabel: 'Mark as refunded',
         askReason: true,
       },
@@ -228,14 +219,8 @@ type BookingExtras = {
   status_reason?: string | null;
 };
 
-/* ────────────────────────────────────────────────────────────────────────── */
-/* Helpers                                                                    */
-/* ────────────────────────────────────────────────────────────────────────── */
-
 const toDay = (d: string | undefined | null) => (d ? d.slice(0, 10) : '');
-
 const normId = (id: unknown): string => (id == null ? '' : String(id).trim().toLowerCase());
-
 const trimTime = (t: string | undefined | null): string => (t ? t.slice(0, 5) : '');
 
 function localDayString(offsetDays = 0) {
@@ -343,11 +328,7 @@ function slotsSummary(
 }
 
 const selectClass =
-  'w-full rounded-xl border border-neutral-700 bg-neutral-950/70 px-3.5 py-2.5 text-sm text-cream transition focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20';
-
-/* ────────────────────────────────────────────────────────────────────────── */
-/* Page                                                                       */
-/* ────────────────────────────────────────────────────────────────────────── */
+  'w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition focus:border-[#3D1164] focus:outline-none focus:ring-2 focus:ring-[#3D1164]/20 shadow-xs';
 
 export function Bookings() {
   const { user } = useAuthStore();
@@ -390,8 +371,6 @@ export function Bookings() {
 
   const defaultTabApplied = useRef(false);
 
-  /* ── Data loading ─────────────────────────────────────────────────────── */
-
   const fetchBookings = useCallback(async () => {
     setLoadError(null);
     try {
@@ -406,15 +385,11 @@ export function Bookings() {
     if (isAdmin || isStaff) loadCourts();
   }, [fetchBookings, loadCourts, isAdmin, isStaff]);
 
-  /* ── Toast auto-dismiss ───────────────────────────────────────────────── */
-
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 4000);
     return () => clearTimeout(t);
   }, [toast]);
-
-  /* ── Counts for tabs ──────────────────────────────────────────────────── */
 
   const tabCounts = useMemo(() => {
     const counts: Record<TabKey, number> = { review: 0, unpaid: 0, confirmed: 0, history: 0, all: 0 };
@@ -432,8 +407,6 @@ export function Bookings() {
     defaultTabApplied.current = true;
     if (tabCounts.review > 0) setTab('review');
   }, [loadingBookings, bookings.length, tabCounts.review]);
-
-  /* ── Court lookup ─────────────────────────────────────────────────────── */
 
   const courtNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -454,13 +427,10 @@ export function Bookings() {
       ).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
       if (names.length > 0) return names.join(', ');
-
       return booking.court_name || 'Unknown Court';
     },
     [courtNameById]
   );
-
-  /* ── Filtering / sorting / paging ─────────────────────────────────────── */
 
   const filtered = useMemo(() => {
     const activeTab = TABS.find((t) => t.key === tab);
@@ -498,7 +468,6 @@ export function Bookings() {
     });
 
     return [...list].sort((a, b) => {
-      // ✅ FIX: Sort by created_at instead of booking date so manual inserts show at the top
       const dateA = new Date(a.created_at).getTime();
       const dateB = new Date(b.created_at).getTime();
       return sortDir === 'asc' ? dateA - dateB : dateB - dateA;
@@ -522,8 +491,6 @@ export function Bookings() {
     setDateFilter('all');
     setTab('all');
   };
-
-  /* ── Actions ──────────────────────────────────────────────────────────── */
 
   const handleStatusUpdate = async (booking: Booking, status: BookingStatus, why?: string) => {
     setUpdatingStatus(status);
@@ -549,7 +516,7 @@ export function Bookings() {
         type: 'error',
         message: msg
           ? `Couldn't update booking: ${msg}`
-          : "Couldn't update booking. It may have been changed by someone else — refreshing the list.",
+          : "Couldn't update booking. Refreshing list.",
       });
       fetchBookings();
     } finally {
@@ -581,7 +548,7 @@ export function Bookings() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
-      setToast({ type: 'error', message: 'Could not copy. Select the number and copy it manually.' });
+      setToast({ type: 'error', message: 'Could not copy. Select the number and copy manually.' });
     }
   };
 
@@ -614,8 +581,6 @@ export function Bookings() {
     await fetchBookings();
   };
 
-  /* ── Derived for modal ────────────────────────────────────────────────── */
-
   const todayStr = localDayString(0);
   const modalActions = selectedBooking
     ? (ACTIONS[selectedBooking.status] ?? []).filter((a) => !(a.adminOnly && !isAdmin))
@@ -632,8 +597,7 @@ export function Bookings() {
     <button
       type="button"
       onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
-      className="inline-flex items-center gap-1 font-semibold uppercase tracking-wider hover:text-cream"
-      aria-label={`Sort by date, currently ${sortDir === 'asc' ? 'oldest first' : 'newest first'}`}
+      className="inline-flex items-center gap-1 font-bold uppercase tracking-wider text-slate-700 hover:text-slate-900"
     >
       Date
       <ArrowUpDown className="h-3 w-3" />
@@ -642,27 +606,28 @@ export function Bookings() {
 
   return (
     <Layout>
-      <div className="container-page py-6 sm:py-8 text-cream">
+      <div className="container-page py-6 sm:py-8 text-slate-900">
         {/* Header */}
         <div className="mb-6 sm:mb-8 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-cream sm:text-3xl">
+            <h1 className="font-display text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
               Bookings
             </h1>
-            <p className="mt-1 text-xs text-cream-muted sm:text-sm">
-              Review payments, confirm reservations, and manage court bookings
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+              Review receipts, confirm reservations, and manage court schedules
             </p>
           </div>
           <Button
             size="md"
             leftIcon={<Plus className="h-4 w-4" />}
             onClick={() => setShowCreateModal(true)}
+            className="bg-[#FF7A00] hover:bg-[#E56600] text-white font-bold"
           >
             New Booking
           </Button>
         </div>
 
-        {/* Status tabs with counts */}
+        {/* Status tabs */}
         <div
           role="tablist"
           aria-label="Booking status"
@@ -677,16 +642,20 @@ export function Bookings() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setTab(t.key)}
-                className={`flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
+                className={`flex shrink-0 items-center gap-2 rounded-2xl border px-4 py-2 text-xs font-bold transition shadow-xs ${
                   active
-                    ? 'border-primary-400 bg-primary-500/20 text-cream'
-                    : 'border-neutral-700 bg-neutral-900/60 text-cream-muted hover:text-cream'
+                    ? 'border-[#3D1164] bg-[#3D1164] text-white'
+                    : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
               >
                 {t.label}
                 <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                    urgent ? 'bg-amber-400 text-neutral-950' : 'bg-neutral-950/70 text-cream-muted'
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                    urgent
+                      ? 'bg-[#FF7A00] text-white'
+                      : active
+                        ? 'bg-purple-800 text-purple-100'
+                        : 'bg-slate-100 text-slate-600'
                   }`}
                 >
                   {tabCounts[t.key]}
@@ -697,12 +666,12 @@ export function Bookings() {
         </div>
 
         {/* Filter controls */}
-        <div className="mb-6 card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-4 sm:p-5 shadow-xl backdrop-blur-sm">
+        <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs">
           <div className={`grid gap-3 ${isAdmin ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
             <Input
               aria-label="Search bookings"
-              placeholder="Search name, email, phone, booking or payment ref..."
-              leftIcon={<Search className="h-4 w-4 text-cream-muted" />}
+              placeholder="Search customer, email, phone, reference..."
+              leftIcon={<Search className="h-4 w-4 text-slate-400" />}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -713,7 +682,7 @@ export function Bookings() {
               className={selectClass}
             >
               {DATE_FILTERS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-neutral-900">
+                <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
               ))}
@@ -725,12 +694,10 @@ export function Bookings() {
                 onChange={(e) => setCourtFilter(e.target.value)}
                 className={selectClass}
               >
-                <option value="all" className="bg-neutral-900">
-                  All Courts
-                </option>
+                <option value="all">All Courts</option>
                 {courts.map((c) =>
                   c ? (
-                    <option key={c.id} value={c.id} className="bg-neutral-900">
+                    <option key={c.id} value={c.id}>
                       {c.name || 'Unnamed Court'}
                     </option>
                   ) : null
@@ -738,7 +705,7 @@ export function Bookings() {
               </select>
             )}
           </div>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-cream-muted">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-slate-500">
             <span aria-live="polite">
               Showing {filtered.length} of {bookings.length} bookings
             </span>
@@ -746,7 +713,7 @@ export function Bookings() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="font-semibold text-primary-300 hover:underline"
+                className="font-bold text-[#FF7A00] hover:underline"
               >
                 Clear filters
               </button>
@@ -754,65 +721,47 @@ export function Bookings() {
           </div>
         </div>
 
-        {/* Content */}
+        {/* List Content */}
         {loadingBookings ? (
           <LoadingSpinner className="py-16" />
         ) : loadError ? (
-          <div className="card rounded-2xl border border-red-500/40 bg-red-500/10 py-10 text-center shadow-xl">
-            <AlertTriangle className="mx-auto mb-2 h-6 w-6 text-red-300" />
-            <p className="text-sm font-medium text-cream">{loadError}</p>
-            <Button size="sm" variant="secondary" className="mt-4" onClick={fetchBookings}>
+          <div className="rounded-3xl border border-rose-200 bg-rose-50 py-10 text-center shadow-xs">
+            <AlertTriangle className="mx-auto mb-2 h-6 w-6 text-rose-600" />
+            <p className="text-sm font-bold text-rose-800">{loadError}</p>
+            <Button size="sm" variant="secondary" className="mt-4 bg-white" onClick={fetchBookings}>
               Try again
             </Button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/60 px-4 py-12 text-center shadow-xl">
-            {bookings.length === 0 ? (
-              <>
-                <p className="text-sm font-semibold text-cream">No bookings yet</p>
-                <p className="mt-1 text-sm text-cream-muted">
-                  Bookings will appear here as customers reserve courts. You can also add one
-                  yourself.
-                </p>
-                <Button
-                  size="sm"
-                  className="mt-4"
-                  leftIcon={<Plus className="h-4 w-4" />}
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  New Booking
-                </Button>
-              </>
-            ) : (
-              <>
-                <p className="text-sm font-semibold text-cream">No bookings match these filters</p>
-                <p className="mt-1 text-sm text-cream-muted">
-                  Try a different search or clear the filters.
-                </p>
-                <Button size="sm" variant="secondary" className="mt-4" onClick={clearFilters}>
-                  Clear filters
-                </Button>
-              </>
+          <div className="rounded-3xl border border-slate-200 bg-white px-4 py-12 text-center shadow-xs">
+            <p className="text-sm font-bold text-slate-900">No bookings match these filters</p>
+            <p className="mt-1 text-sm text-slate-500">
+              Try adjusting your query or reset filters.
+            </p>
+            {hasActiveFilters && (
+              <Button size="sm" variant="secondary" className="mt-4 bg-white" onClick={clearFilters}>
+                Clear filters
+              </Button>
             )}
           </div>
         ) : (
-          <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 overflow-hidden shadow-xl">
-            {/* Desktop table view */}
+          <div className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+            {/* Desktop Table View */}
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-neutral-700 bg-neutral-950/70 text-xs uppercase tracking-wider text-cream-muted">
-                    <th className="px-4 py-3 font-semibold">Reference</th>
-                    <th className="px-4 py-3 font-semibold">Customer</th>
-                    <th className="px-4 py-3 font-semibold">Court(s)</th>
-                    <th className="px-4 py-3">{SortHeader}</th>
-                    <th className="px-4 py-3 font-semibold">Slots</th>
-                    <th className="px-4 py-3 font-semibold">Total</th>
-                    <th className="px-4 py-3 font-semibold">Status</th>
-                    <th className="px-4 py-3 font-semibold text-right">Actions</th>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                    <th className="px-4 py-3.5 font-bold">Reference</th>
+                    <th className="px-4 py-3.5 font-bold">Customer</th>
+                    <th className="px-4 py-3.5 font-bold">Court(s)</th>
+                    <th className="px-4 py-3.5">{SortHeader}</th>
+                    <th className="px-4 py-3.5 font-bold">Slots</th>
+                    <th className="px-4 py-3.5 font-bold">Total</th>
+                    <th className="px-4 py-3.5 font-bold">Status</th>
+                    <th className="px-4 py-3.5 font-bold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-800/80">
+                <tbody className="divide-y divide-slate-100">
                   {pageItems.map((b) => {
                     const needsReview = b.status === 'payment_submitted';
                     const adjust = pendingAdjustments[b.id];
@@ -823,49 +772,46 @@ export function Bookings() {
                       <tr
                         key={b.id}
                         onClick={() => openDetails(b)}
-                        className={`cursor-pointer transition hover:bg-neutral-800/40 ${
-                          needsReview ? 'border-l-4 border-l-amber-400 bg-amber-400/5' : ''
+                        className={`cursor-pointer transition hover:bg-slate-50/80 ${
+                          needsReview ? 'border-l-4 border-l-[#FF7A00] bg-orange-50/30' : ''
                         }`}
                       >
                         <td className="px-4 py-3.5">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="font-mono font-bold text-primary-300 tracking-wide">
+                            <span className="font-mono font-bold text-[#3D1164]">
                               {b.reference_code || 'N/A'}
                             </span>
                             {refundDue > 0 && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-purple-200">
+                              <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-[#3D1164]">
                                 <RotateCcw className="h-3 w-3" />
                                 Refund {formatCurrency(refundDue)}
                               </span>
                             )}
                             {balanceDue > 0 && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200">
+                              <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-800">
                                 <AlertTriangle className="h-3 w-3" />
                                 Balance {formatCurrency(balanceDue)}
                               </span>
                             )}
                           </div>
                           {b.payment_reference && (
-                            <p className="mt-0.5 text-[11px] text-cream-muted">
-                              Pay ref:{' '}
-                              <span className="font-mono text-cream">{b.payment_reference}</span>
+                            <p className="mt-0.5 text-[11px] text-slate-500 font-medium">
+                              Pay ref: <span className="font-mono text-slate-800">{b.payment_reference}</span>
                             </p>
                           )}
                         </td>
                         <td className="px-4 py-3.5">
-                          <p className="font-medium text-cream">{b.customer?.name || 'Unknown'}</p>
-                          <p className="text-xs text-cream-muted">
-                            {b.customer?.email || 'No email'}
-                          </p>
+                          <p className="font-bold text-slate-900">{b.customer?.name || 'Unknown'}</p>
+                          <p className="text-xs text-slate-500 font-medium">{b.customer?.email || 'No email'}</p>
                         </td>
-                        <td className="px-4 py-3.5 font-medium text-cream">{courtNames}</td>
-                        <td className="px-4 py-3.5 text-xs text-cream-muted">
+                        <td className="px-4 py-3.5 font-semibold text-slate-800">{courtNames}</td>
+                        <td className="px-4 py-3.5 text-xs text-slate-600 font-medium">
                           {formatDateLong(b.date)}
                         </td>
-                        <td className="px-4 py-3.5 text-xs text-cream-muted max-w-[280px]">
+                        <td className="px-4 py-3.5 text-xs text-slate-500 max-w-[280px]">
                           {slotsSummary(b.slots, courts, b.court_name)}
                         </td>
-                        <td className="px-4 py-3.5 font-bold text-accent-400">
+                        <td className="px-4 py-3.5 font-black text-[#FF7A00]">
                           {formatCurrency(b.total_amount || 0)}
                         </td>
                         <td className="px-4 py-3.5">
@@ -889,9 +835,8 @@ export function Bookings() {
                                 e.stopPropagation();
                                 openDetails(b);
                               }}
-                              className="rounded-lg border border-neutral-600 bg-neutral-800/60 p-1.5 text-cream-muted transition hover:border-primary-400 hover:text-primary-300 active:scale-95"
+                              className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-600 transition hover:bg-slate-100 shadow-xs"
                               title="View details"
-                              aria-label={`View details for booking ${b.reference_code || ''}`}
                             >
                               <Eye className="h-4 w-4" />
                             </button>
@@ -904,80 +849,46 @@ export function Bookings() {
               </table>
             </div>
 
-            {/* Mobile list view */}
+            {/* Mobile Cards */}
             <div className="space-y-3 p-4 md:hidden">
               <button
                 type="button"
                 onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-cream-muted"
+                className="inline-flex items-center gap-1 text-xs font-bold text-slate-500"
               >
                 <ArrowUpDown className="h-3 w-3" />
                 Date: {sortDir === 'asc' ? 'oldest first' : 'newest first'}
               </button>
               {pageItems.map((b) => {
                 const needsReview = b.status === 'payment_submitted';
-                const adjust = pendingAdjustments[b.id];
-                const refundDue = adjust?.refund_due ?? 0;
-                const balanceDue = adjust?.balance_due ?? 0;
                 const courtNames = getCourtNamesForBooking(b);
                 return (
                   <div
                     key={b.id}
-                    className={`rounded-xl border bg-neutral-950/70 p-4 space-y-2 ${
-                      needsReview ? 'border-amber-400/60' : 'border-neutral-700'
+                    className={`rounded-2xl border bg-white p-4 space-y-2 shadow-xs ${
+                      needsReview ? 'border-orange-300 bg-orange-50/20' : 'border-slate-200'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-primary-300 tracking-wide">
+                      <span className="font-mono font-bold text-[#3D1164]">
                         {b.reference_code || 'N/A'}
                       </span>
                       <StatusBadge status={b.status} size="sm" />
                     </div>
 
-                    {(refundDue > 0 || balanceDue > 0) && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {refundDue > 0 && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-purple-500/40 bg-purple-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-purple-200">
-                            <RotateCcw className="h-3 w-3" />
-                            Refund {formatCurrency(refundDue)}
-                          </span>
-                        )}
-                        {balanceDue > 0 && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200">
-                            <AlertTriangle className="h-3 w-3" />
-                            Balance {formatCurrency(balanceDue)}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
                     <div>
-                      <p className="text-sm font-bold text-cream">{b.customer?.name || 'Unknown'}</p>
-                      {b.customer?.email && (
-                        <p className="text-xs text-cream-muted">{b.customer.email}</p>
-                      )}
-                      {b.customer?.phone && (
-                        <a
-                          href={`tel:${b.customer.phone}`}
-                          className="text-xs text-primary-300 underline"
-                        >
-                          {b.customer.phone}
-                        </a>
-                      )}
-                      <p className="mt-1 text-xs text-cream-muted">
+                      <p className="text-sm font-bold text-slate-900">{b.customer?.name || 'Unknown'}</p>
+                      <p className="text-xs text-slate-500">{b.customer?.phone || b.customer?.email}</p>
+                      <p className="mt-1 text-xs text-slate-600 font-semibold">
                         {courtNames} — {formatDateLong(b.date)}
                       </p>
-                      <p className="mt-1 text-xs text-cream-muted/90">
+                      <p className="text-xs text-slate-500">
                         {slotsSummary(b.slots, courts, b.court_name)}
                       </p>
                     </div>
-                    {b.payment_reference && (
-                      <p className="text-xs text-cream-muted">
-                        Pay ref: <span className="font-mono text-cream">{b.payment_reference}</span>
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between border-t border-neutral-800 pt-3">
-                      <span className="text-sm font-extrabold text-accent-400">
+
+                    <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+                      <span className="text-base font-black text-[#FF7A00]">
                         {formatCurrency(b.total_amount || 0)}
                       </span>
                       <Button
@@ -985,7 +896,7 @@ export function Bookings() {
                         variant={needsReview ? 'success' : 'secondary'}
                         onClick={() => openDetails(b)}
                       >
-                        {needsReview ? 'Review payment' : 'View Details'}
+                        {needsReview ? 'Review' : 'View'}
                       </Button>
                     </div>
                   </div>
@@ -995,7 +906,7 @@ export function Bookings() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-neutral-800 px-4 py-3 text-xs text-cream-muted">
+              <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-xs text-slate-500">
                 <span>
                   Page {currentPage} of {totalPages}
                 </span>
@@ -1006,6 +917,7 @@ export function Bookings() {
                     disabled={currentPage === 1}
                     leftIcon={<ChevronLeft className="h-4 w-4" />}
                     onClick={() => setPage(currentPage - 1)}
+                    className="bg-white border-slate-300 text-slate-800"
                   >
                     Previous
                   </Button>
@@ -1014,6 +926,7 @@ export function Bookings() {
                     variant="secondary"
                     disabled={currentPage === totalPages}
                     onClick={() => setPage(currentPage + 1)}
+                    className="bg-white border-slate-300 text-slate-800"
                   >
                     Next
                     <ChevronRight className="ml-1 h-4 w-4" />
@@ -1025,7 +938,7 @@ export function Bookings() {
         )}
       </div>
 
-      {/* ─────────────────────── Booking Details Modal ─────────────────────── */}
+      {/* Booking Details Modal */}
       <AnimatePresence>
         {selectedBooking && (
           <Modal
@@ -1034,114 +947,100 @@ export function Bookings() {
             title={`Booking ${selectedBooking.reference_code || 'N/A'}`}
             size="lg"
           >
-            <div className="flex max-h-[80vh] flex-col">
-              {/* Scrollable content area */}
+            <div className="flex max-h-[80vh] flex-col text-slate-900">
               <div className="flex-1 overflow-y-auto pr-1 pb-4 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-700 pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
                   <StatusBadge status={selectedBooking.status} />
-                  <span className="text-xs text-cream-muted font-medium">
+                  <span className="text-xs text-slate-500 font-medium">
                     Created {formatDateTime(selectedBooking.created_at)}
                   </span>
                 </div>
 
-                {extra?.status_updated_at && (
-                  <p className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-2 text-xs text-cream-muted">
-                    Last changed {extra.status_updated_by ? `by ${extra.status_updated_by} ` : ''}
-                    on {formatDateTime(extra.status_updated_at)}
-                    {extra.status_reason ? ` — "{extra.status_reason}"` : ''}
-                  </p>
-                )}
-
                 <div className="grid gap-3.5 sm:grid-cols-2">
-                  <div className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-primary-300">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#3D1164]">
                       Customer
                     </p>
-                    <p className="mt-1 text-sm font-bold text-cream">
+                    <p className="mt-1 text-sm font-bold text-slate-900">
                       {selectedBooking.customer?.name || 'Unknown'}
                     </p>
-                    {selectedBooking.customer?.email ? (
+                    {selectedBooking.customer?.email && (
                       <a
                         href={`mailto:${selectedBooking.customer.email}`}
-                        className="mt-1 flex items-center gap-1.5 text-xs text-cream-muted hover:text-primary-300"
+                        className="mt-1 flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#3D1164]"
                       >
-                        <Mail className="h-3.5 w-3.5" />
+                        <Mail className="h-3.5 w-3.5 text-slate-400" />
                         {selectedBooking.customer.email}
                       </a>
-                    ) : (
-                      <p className="mt-1 text-xs text-cream-muted">No email</p>
                     )}
-                    {selectedBooking.customer?.phone ? (
+                    {selectedBooking.customer?.phone && (
                       <a
                         href={`tel:${selectedBooking.customer.phone}`}
-                        className="mt-1 flex items-center gap-1.5 text-xs text-cream-muted hover:text-primary-300"
+                        className="mt-1 flex items-center gap-1.5 text-xs text-slate-600 hover:text-[#3D1164]"
                       >
-                        <Phone className="h-3.5 w-3.5" />
+                        <Phone className="h-3.5 w-3.5 text-slate-400" />
                         {selectedBooking.customer.phone}
                       </a>
-                    ) : (
-                      <p className="mt-1 text-xs text-cream-muted">No phone</p>
                     )}
                     {selectedBooking.customer?.notes && (
-                      <p className="mt-2.5 rounded-lg border border-neutral-800 bg-neutral-900/60 p-2 text-xs italic text-cream-muted">
-                        "{selectedBooking.customer.notes}"
+                      <p className="mt-2.5 rounded-xl border border-slate-200 bg-white p-2 text-xs italic text-slate-600">
+                        &quot;{selectedBooking.customer.notes}&quot;
                       </p>
                     )}
                   </div>
 
-                  <div className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-primary-300">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#3D1164]">
                       Court Booking
                     </p>
-                    <p className="mt-1 text-sm font-bold text-cream">
+                    <p className="mt-1 text-sm font-bold text-slate-900">
                       {getCourtNamesForBooking(selectedBooking)}
                     </p>
-                    <p className="text-xs text-cream-muted">{formatDateLong(selectedBooking.date)}</p>
-                    <p className="mt-1.5 text-xs text-cream-muted">
+                    <p className="text-xs text-slate-500 font-medium">
+                      {formatDateLong(selectedBooking.date)}
+                    </p>
+                    <p className="mt-1.5 text-xs text-slate-600">
                       {slotsSummary(selectedBooking.slots, courts)}
                     </p>
                   </div>
                 </div>
 
-                {/* Total Summary */}
-                <div className="flex items-center justify-between rounded-xl border border-primary-500/40 bg-primary-500/15 p-4">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-cream-muted">
+                <div className="flex items-center justify-between rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3.5">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                     {selectedBooking.status === 'payment_submitted'
                       ? 'Amount to verify'
                       : 'Total Amount'}
                   </span>
-                  <span className="font-display text-2xl font-extrabold text-accent-400">
+                  <span className="font-display text-2xl font-black text-[#FF7A00]">
                     {formatCurrency(selectedBooking.total_amount || 0)}
                   </span>
                 </div>
 
-                {/* Payment Details */}
-                <div className="rounded-xl border border-neutral-700 bg-neutral-950/70 p-4">
-                  <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-primary-300">
+                {/* Payment Review Details */}
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-[#3D1164]">
                     Payment Details
                   </p>
 
                   {selectedBooking.payment_screenshot_url || selectedBooking.payment_reference ? (
                     <>
                       {selectedBooking.payment_reference && (
-                        <div className="mb-3 flex items-center justify-between rounded-xl border border-neutral-700 bg-neutral-900/70 p-3">
+                        <div className="mb-3 flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
                           <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-wider text-cream-muted">
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                               Reference Number
                             </p>
-                            <p className="mt-0.5 font-mono text-sm font-bold tracking-wider text-primary-300">
+                            <p className="mt-0.5 font-mono text-base font-black text-[#3D1164]">
                               {selectedBooking.payment_reference}
                             </p>
                           </div>
                           <button
                             onClick={() => copyReference(selectedBooking.payment_reference || '')}
-                            className="flex items-center gap-1.5 rounded-lg border border-neutral-600 bg-neutral-800 px-2.5 py-1.5 text-xs text-cream-muted transition hover:border-primary-400 hover:text-primary-300 active:scale-95"
-                            title="Copy reference"
-                            aria-label="Copy payment reference number"
+                            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100"
                           >
                             {copied ? (
                               <>
-                                <Check className="h-3.5 w-3.5 text-accent-400" /> Copied
+                                <Check className="h-3.5 w-3.5 text-emerald-600" /> Copied
                               </>
                             ) : (
                               <>
@@ -1156,32 +1055,30 @@ export function Bookings() {
                         <button
                           type="button"
                           onClick={() => setZoomImage(selectedBooking.payment_screenshot_url!)}
-                          className="group relative block w-full"
-                          aria-label="Enlarge payment screenshot"
+                          className="group relative block w-full text-center"
                         >
                           <img
                             src={selectedBooking.payment_screenshot_url}
                             alt="Payment screenshot"
-                            className="max-h-72 w-full rounded-lg object-contain bg-neutral-950 border border-neutral-800"
+                            className="mx-auto max-h-72 rounded-xl object-contain border border-slate-200 bg-white shadow-xs"
                           />
-                          <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-md bg-black/60 px-2 py-1 text-[11px] font-medium text-white opacity-90">
-                            <ZoomIn className="h-3 w-3" /> Click to enlarge
+                          <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-black/70 px-2.5 py-1 text-[11px] font-bold text-white">
+                            <ZoomIn className="h-3 w-3" /> Enlarge
                           </span>
                         </button>
                       ) : (
-                        <p className="rounded-lg border border-dashed border-neutral-700 bg-neutral-950/60 p-3 text-center text-xs text-cream-muted">
-                          No screenshot uploaded — customer submitted a reference number only.
+                        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-3 text-center text-xs text-slate-500">
+                          No screenshot uploaded. Reference number provided only.
                         </p>
                       )}
                     </>
                   ) : (
-                    <div className="rounded-lg border border-dashed border-neutral-700 bg-neutral-950/60 p-3 text-center text-xs text-cream-muted">
-                      <p className="font-semibold text-cream">Awaiting payment</p>
-                      <p className="mt-0.5">The customer hasn't submitted payment proof yet.</p>
+                    <div className="rounded-xl border border-dashed border-slate-300 bg-white p-4 text-center text-xs text-slate-500">
+                      <p className="font-bold text-slate-800">Awaiting payment</p>
+                      <p className="mt-0.5">The customer has not submitted payment proof yet.</p>
                       {selectedBooking.status === 'pending_payment' && deadline && (
-                        <p className="mt-1.5">
-                          Pay by {formatDateTime(deadline)} ·{' '}
-                          <span className="font-semibold text-amber-300">{timeLeft(deadline)}</span>
+                        <p className="mt-1 text-amber-700 font-semibold">
+                          Pay by {formatDateTime(deadline)} · {timeLeft(deadline)}
                         </p>
                       )}
                     </div>
@@ -1189,9 +1086,9 @@ export function Bookings() {
                 </div>
               </div>
 
-              {/* Fixed bottom actions bar */}
-              <div className="shrink-0 border-t border-neutral-700 bg-neutral-900 px-1 pt-4 pb-1 mt-2">
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-cream-muted">
+              {/* Action Buttons */}
+              <div className="shrink-0 border-t border-slate-200 bg-white pt-4">
+                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">
                   Actions
                 </p>
 
@@ -1199,7 +1096,7 @@ export function Bookings() {
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="mb-3 w-full sm:w-auto"
+                    className="mb-3 w-full sm:w-auto bg-white border-slate-300 text-slate-800"
                     leftIcon={<CalendarClock className="h-4 w-4" />}
                     onClick={() => openReschedule(selectedBooking)}
                     disabled={updatingStatus !== null}
@@ -1224,31 +1121,13 @@ export function Bookings() {
                           >
                             {action.label}
                           </Button>
-                          <p className="text-[11px] leading-snug text-cream-muted">
-                            {notYet
-                              ? 'Not available yet — this booking is in the future.'
-                              : action.helper}
+                          <p className="text-[11px] leading-snug text-slate-500">
+                            {notYet ? 'Available once booking date arrives.' : action.helper}
                           </p>
                         </div>
                       );
                     })}
                   </div>
-                )}
-
-                {hiddenAdminOnly && (
-                  <p className="mt-3 text-xs text-cream-muted">
-                    Refunds can only be recorded by an admin.
-                  </p>
-                )}
-
-                {TERMINAL_STATUSES.includes(selectedBooking.status) && (
-                  <p className="text-xs text-cream-muted">
-                    This booking is{' '}
-                    <span className="font-semibold text-cream">
-                      {selectedBooking.status.replace(/_/g, ' ')}
-                    </span>{' '}
-                    and can't be changed.
-                  </p>
                 )}
               </div>
             </div>
@@ -1256,7 +1135,7 @@ export function Bookings() {
         )}
       </AnimatePresence>
 
-      {/* ─────────────────────── Confirm action dialog ─────────────────────── */}
+      {/* Confirm Action Dialog */}
       <AnimatePresence>
         {pendingAction && (
           <Modal
@@ -1265,11 +1144,11 @@ export function Bookings() {
             title={pendingAction.action.confirm?.title || 'Are you sure?'}
             size="sm"
           >
-            <div className="space-y-4">
-              <p className="text-sm text-cream-muted">{pendingAction.action.confirm?.message}</p>
-              <p className="text-xs text-cream-muted">
+            <div className="space-y-4 text-slate-800">
+              <p className="text-sm text-slate-600">{pendingAction.action.confirm?.message}</p>
+              <p className="text-xs text-slate-500">
                 Booking{' '}
-                <span className="font-mono font-bold text-primary-300">
+                <span className="font-mono font-bold text-[#3D1164]">
                   {pendingAction.booking.reference_code}
                 </span>{' '}
                 · {pendingAction.booking.customer?.name || 'Unknown'}
@@ -1277,10 +1156,7 @@ export function Bookings() {
 
               {pendingAction.action.confirm?.askReason && (
                 <div>
-                  <label
-                    htmlFor="action-reason"
-                    className="mb-1 block text-xs font-semibold text-cream-muted"
-                  >
+                  <label htmlFor="action-reason" className="mb-1 block text-xs font-bold text-slate-700">
                     Reason (optional)
                   </label>
                   <textarea
@@ -1289,15 +1165,15 @@ export function Bookings() {
                     onChange={(e) => setReason(e.target.value)}
                     rows={3}
                     maxLength={300}
-                    placeholder="Shown in the booking history"
+                    placeholder="Note for booking history..."
                     className={selectClass}
                   />
                 </div>
               )}
 
-              <div className="flex justify-end gap-2">
-                <Button size="sm" variant="secondary" onClick={() => setPendingAction(null)}>
-                  Go back
+              <div className="flex justify-end gap-2 pt-2">
+                <Button size="sm" variant="secondary" onClick={() => setPendingAction(null)} className="bg-white">
+                  Cancel
                 </Button>
                 <Button size="sm" variant={pendingAction.action.variant} onClick={confirmPending}>
                   {pendingAction.action.confirm?.confirmLabel || 'Confirm'}
@@ -1308,71 +1184,51 @@ export function Bookings() {
         )}
       </AnimatePresence>
 
-      {/* ─────────────────────── Screenshot lightbox ─────────────────────── */}
+      {/* Screenshot Lightbox */}
       {zoomImage && (
         <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-xs"
           role="dialog"
-          aria-label="Payment screenshot enlarged"
           onClick={() => setZoomImage(null)}
         >
           <button
             type="button"
             onClick={() => setZoomImage(null)}
-            className="absolute right-4 top-4 rounded-full bg-black/60 p-2 text-white"
-            aria-label="Close enlarged image"
+            className="absolute right-4 top-4 rounded-full bg-white/20 p-2 text-white hover:bg-white/30"
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
           </button>
           <img
             src={zoomImage}
             alt="Payment screenshot enlarged"
-            className="max-h-full max-w-full rounded-lg object-contain"
+            className="max-h-[90vh] max-w-full rounded-2xl object-contain shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
-          <a
-            href={zoomImage}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-4 rounded-lg bg-black/60 px-3 py-1.5 text-xs font-medium text-white underline"
-          >
-            Open in new tab
-          </a>
         </div>
       )}
 
-      {/* ─────────────────────── Toast ─────────────────────── */}
-      <div
-        aria-live="polite"
-        className="pointer-events-none fixed inset-x-0 bottom-4 z-[90] flex justify-center px-4"
-      >
-        {toast && (
+      {/* Toast */}
+      {toast && (
+        <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[90] flex justify-center px-4">
           <div
-            role="status"
-            className={`pointer-events-auto flex max-w-md items-start gap-2 rounded-xl border px-4 py-3 text-sm font-medium shadow-2xl ${
+            className={`pointer-events-auto flex max-w-md items-start gap-2 rounded-2xl border p-4 text-xs font-bold shadow-xl ${
               toast.type === 'success'
-                ? 'border-accent-500/50 bg-neutral-900/95 text-accent-200'
-                : 'border-red-500/50 bg-neutral-900/95 text-red-200'
+                ? 'border-emerald-300 bg-white text-emerald-800'
+                : 'border-rose-300 bg-white text-rose-800'
             }`}
           >
             {toast.type === 'success' ? (
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
             ) : (
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
             )}
-            <span>{toast.message}</span>
-            <button
-              type="button"
-              onClick={() => setToast(null)}
-              aria-label="Dismiss notification"
-              className="ml-2 opacity-70 hover:opacity-100"
-            >
+            <span className="flex-1">{toast.message}</span>
+            <button type="button" onClick={() => setToast(null)} className="text-slate-400 hover:text-slate-700">
               <X className="h-4 w-4" />
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <StaffCreateBookingModal
         isOpen={showCreateModal}

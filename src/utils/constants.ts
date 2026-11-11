@@ -1,14 +1,18 @@
 export const APP_CONFIG = {
-  name: import.meta.env.VITE_APP_NAME ?? 'Smash Point',
+  name: import.meta.env.VITE_APP_NAME ?? 'Smash Zone',
+  fullName: 'Smash Zone by Jerjen',
+  subTitle: 'Recreational Hub',
   demoMode: (import.meta.env.VITE_DEMO_MODE ?? 'false') === 'true',
-  
-  // ✅ FIXED: Defaults to YOUR Smash Point backend, not the old client's
-  apiUrl: import.meta.env.VITE_API_BASE_URL ?? 'https://smashpoint-booking-api.onrender.com',
-  
-  tagline: 'Dink Fast. Smash Hard.',
+
+  // Render API default for Smash Zone
+  apiUrl:
+    import.meta.env.VITE_API_BASE_URL ??
+    'https://smashzone-booking-api.onrender.com',
+
+  tagline: 'Smash hard, play smart. Tandag City’s premier pickleball facility.',
   established: '2026',
   paymentNumber: '09XX XXX XXXX', // TODO: real GCash number
-  paymentAccountName: 'Smash Point Pickle Sports Center',
+  paymentAccountName: 'Smash Zone Recreational Hub',
   developer: 'Astravex Systems',
   paymentTimerSeconds: 15 * 60,
   defaultMaxAdvanceBookingDays: 90,
@@ -23,7 +27,7 @@ export const FIXED_SLOT = {
 };
 
 export const ADMIN_CREDENTIALS = {
-  email: 'admin@smashpoint.com',
+  email: 'admin@smashzone.com',
   password: 'Admin123!',
 };
 
@@ -31,69 +35,69 @@ export const BOOKING_STATUS_META: Record<
   string,
   { label: string; color: string; bg: string; border: string; dot: string }
 > = {
-  // Pending payment: Amber / Gold
+  // Pending payment: Warm Gold / Amber
   pending_payment: {
     label: 'Pending Payment',
-    color: 'text-amber-300',
-    bg: 'bg-amber-950/40',
-    border: 'border-amber-500/40',
-    dot: 'bg-amber-400',
+    color: 'text-amber-800',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    dot: 'bg-amber-500',
   },
-  // Payment submitted: Electric Sky Blue
+  // Payment submitted: Clear Sky Blue
   payment_submitted: {
     label: 'Payment Submitted',
-    color: 'text-sky-300',
-    bg: 'bg-sky-950/40',
-    border: 'border-sky-500/40',
-    dot: 'bg-sky-400',
+    color: 'text-sky-800',
+    bg: 'bg-sky-50',
+    border: 'border-sky-200',
+    dot: 'bg-sky-500',
   },
-  // Confirmed: Emerald Green
+  // Confirmed: Crisp Forest / Emerald Green
   confirmed: {
     label: 'Confirmed',
-    color: 'text-emerald-300',
-    bg: 'bg-emerald-950/40',
-    border: 'border-emerald-500/40',
-    dot: 'bg-emerald-400',
+    color: 'text-emerald-800',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    dot: 'bg-emerald-500',
   },
-  // Completed: Cool Slate Navy
+  // Completed: Neutral Slate Navy
   completed: {
     label: 'Completed',
-    color: 'text-slate-300',
-    bg: 'bg-slate-900/60',
-    border: 'border-slate-700/80',
-    dot: 'bg-slate-400',
+    color: 'text-slate-700',
+    bg: 'bg-slate-100',
+    border: 'border-slate-200',
+    dot: 'bg-slate-500',
   },
-  // Cancelled: Neutral Slate / Charcoal (No red)
+  // Cancelled: Neutral Muted Gray
   cancelled: {
     label: 'Cancelled',
-    color: 'text-neutral-400',
-    bg: 'bg-neutral-900/60',
-    border: 'border-neutral-800',
-    dot: 'bg-neutral-500',
+    color: 'text-slate-600',
+    bg: 'bg-slate-100',
+    border: 'border-slate-200',
+    dot: 'bg-slate-400',
   },
-  // Rejected: Calm Zinc (No red)
+  // Rejected: Zinc / Ash
   rejected: {
     label: 'Declined',
-    color: 'text-zinc-300',
-    bg: 'bg-zinc-900/70',
-    border: 'border-zinc-700',
-    dot: 'bg-zinc-400',
+    color: 'text-zinc-700',
+    bg: 'bg-zinc-100',
+    border: 'border-zinc-300',
+    dot: 'bg-zinc-500',
   },
-  // Expired: Quiet Muted Neutral
+  // Expired: Soft Muted Slate
   expired: {
     label: 'Expired',
-    color: 'text-neutral-400',
-    bg: 'bg-neutral-900/50',
-    border: 'border-neutral-800/80',
-    dot: 'bg-neutral-600',
+    color: 'text-slate-500',
+    bg: 'bg-slate-50',
+    border: 'border-slate-200',
+    dot: 'bg-slate-400',
   },
-  // Refunded: Purple
+  // Refunded: Brand Purple Accent Tint
   refunded: {
     label: 'Refunded',
-    color: 'text-purple-300',
-    bg: 'bg-purple-950/40',
-    border: 'border-purple-500/40',
-    dot: 'bg-purple-400',
+    color: 'text-[#3D1164]',
+    bg: 'bg-purple-50',
+    border: 'border-purple-200',
+    dot: 'bg-[#5A1B91]',
   },
 };
 
@@ -220,11 +224,11 @@ export function describeAdvanceWindow(maxAdvanceDays: number): string {
 }
 
 /**
- * Booking reference prefix: SP (Smash Point).
- * Example: SPK7M2XQ
+ * Booking reference prefix: SZ (Smash Zone).
+ * Example: SZK7M2XQ
  */
 export function generateReferenceCode(): string {
-  const prefix = 'SP';
+  const prefix = 'SZ';
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
   for (let i = 0; i < 6; i++) {

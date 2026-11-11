@@ -1,4 +1,3 @@
-// src/components/ui/Modal.tsx
 import { type ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,18 +10,7 @@ interface ModalProps {
   children: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
-  /**
-   * Optional footer content rendered inside a sticky bottom bar.
-   * Use this for form actions (Save / Cancel). On mobile the footer
-   * stays pinned to the bottom of the modal, on desktop it behaves
-   * like a normal footer.
-   */
   footer?: ReactNode;
-  /**
-   * When true, the modal takes up the full viewport on mobile
-   * (no rounded corners, no floating card). Better for long forms.
-   * Defaults to true.
-   */
   fullScreenOnMobile?: boolean;
 }
 
@@ -36,7 +24,6 @@ export function Modal({
   footer,
   fullScreenOnMobile = true,
 }: ModalProps) {
-  // Lock body scroll when open
   useEffect(() => {
     if (isOpen) {
       const previous = document.body.style.overflow;
@@ -47,7 +34,6 @@ export function Modal({
     }
   }, [isOpen]);
 
-  // Close on Escape
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -75,28 +61,28 @@ export function Modal({
             p-0 sm:p-4
           `}
         >
-          {/* Backdrop */}
+          {/* Backdrop with clean darkened blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-charcoal/85 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
           />
 
-          {/* Panel */}
+          {/* Modal Card Panel */}
           <motion.div
             initial={{ opacity: 0, scale: 0.97, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 15 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
             className={`
-              relative flex w-full flex-col bg-neutral-900/95
+              relative flex w-full flex-col bg-white text-slate-900
               ${sizes[size]}
               ${fullScreenOnMobile
-                ? 'h-full max-h-none rounded-none sm:h-auto sm:max-h-[90vh] sm:rounded-2xl'
-                : 'max-h-[90vh] rounded-2xl'}
-              border border-neutral-700 shadow-2xl backdrop-blur-sm
+                ? 'h-full max-h-none rounded-none sm:h-auto sm:max-h-[90vh] sm:rounded-3xl'
+                : 'max-h-[90vh] rounded-3xl'}
+              border border-slate-200 shadow-2xl
               ${className || ''}
             `}
             role="dialog"
@@ -104,34 +90,28 @@ export function Modal({
           >
             {/* Header */}
             {title && (
-              <div className="flex shrink-0 items-center justify-between border-b border-neutral-700 px-4 py-3.5 sm:px-6 sm:py-4">
-                <h3 className="pr-2 font-display text-base font-bold text-cream sm:text-lg">
+              <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+                <h3 className="pr-2 font-display text-lg font-black tracking-wide text-slate-900 sm:text-xl">
                   {title}
                 </h3>
                 <button
                   onClick={onClose}
-                  className="shrink-0 rounded-xl border border-transparent p-1.5 text-cream-muted transition hover:border-neutral-600 hover:bg-neutral-800/80 hover:text-primary-300 active:scale-95"
+                  className="shrink-0 rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 active:scale-95 shadow-xs"
                   aria-label="Close"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             )}
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 text-slate-800">
               {children}
             </div>
 
             {/* Footer */}
             {footer && (
-              <div
-                className="
-                  shrink-0 border-t border-neutral-700
-                  bg-neutral-950/90 backdrop-blur-sm
-                  p-4 sm:p-5
-                "
-              >
+              <div className="shrink-0 border-t border-slate-200 bg-slate-50/80 backdrop-blur-xs p-4 sm:p-5 rounded-b-3xl">
                 {footer}
               </div>
             )}

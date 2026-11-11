@@ -1,7 +1,5 @@
-// src/pages/Booking.tsx
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -37,7 +35,6 @@ const normalizePhone = (value: string) =>
 const NOTES_MAX = 500;
 const HOLD_MINUTES = Math.round(APP_CONFIG.paymentTimerSeconds / 60);
 
-// ─── Blocklist: placeholder names that are obviously not real customers ───
 const BLOCKED_NAMES_EXACT = [
   'juan dela cruz',
   'juan delacruz',
@@ -60,7 +57,6 @@ const BLOCKED_NAMES_EXACT = [
   'xxx',
 ];
 
-// ─── Blocklist: disposable / fake email services ───
 const BLOCKED_EMAIL_DOMAINS = [
   'test.com',
   'example.com',
@@ -78,7 +74,6 @@ const BLOCKED_EMAIL_DOMAINS = [
   'trashmail.com',
 ];
 
-// ─── Blocklist: fake email local parts (regardless of domain) ───
 const BLOCKED_EMAIL_LOCALPARTS = [
   'johndoe',
   'janedoe',
@@ -98,51 +93,25 @@ const BLOCKED_EMAIL_LOCALPARTS = [
 const isTestString = (val: string): boolean => {
   const lower = val.toLowerCase().trim();
   if (lower.length === 0) return true;
-
-  // Substring blocklist (existing behavior)
   const blockedWords = ['test', 'sample', 'testing', 'admin', 'fake'];
   if (blockedWords.some((word) => lower.includes(word))) return true;
-
-  // Exact placeholder names
   if (BLOCKED_NAMES_EXACT.includes(lower)) return true;
-
-  // Repeated single character: "aaaa", "bbbb", "xxxx"
   if (/^(.)\1{2,}$/.test(lower.replace(/\s+/g, ''))) return true;
-
-  // Keyboard mashes / sequential patterns
   if (/^(asdf|qwer|zxcv|1234|abcd)/i.test(lower)) return true;
-
   return false;
 };
 
 const isFakeEmail = (email: string): boolean => {
   if (!email || !email.includes('@')) return true;
-
   const parts = email.toLowerCase().trim().split('@');
   if (parts.length !== 2) return true;
-
-  const localPart = parts[0];
-  const domain = parts[1];
-
+  const [localPart, domain] = parts;
   if (!localPart || !domain) return true;
-
-  // Blocked disposable email domains
-  if (BLOCKED_EMAIL_DOMAINS.some((d) => domain === d || domain.endsWith('.' + d))) {
-    return true;
-  }
-
-  // RFC-reserved TLDs (test-only, never real inbox)
+  if (BLOCKED_EMAIL_DOMAINS.some((d) => domain === d || domain.endsWith('.' + d))) return true;
   if (/\.(test|invalid|example|localhost)$/i.test(domain)) return true;
-
-  // Blocked local parts (johndoe@*, test@*, etc.)
   if (BLOCKED_EMAIL_LOCALPARTS.includes(localPart)) return true;
-
-  // Local part containing "test"/"sample"/"fake"/"admin" as whole word
   if (/\b(test|sample|fake|admin)\b/i.test(localPart)) return true;
-
-  // Repeated single character local part: "aaaa@gmail.com", "xxxx@gmail.com"
   if (/^(.)\1{2,}$/.test(localPart)) return true;
-
   return false;
 };
 
@@ -154,7 +123,7 @@ const customerSchema = z.object({
     .max(80, 'Name is too long')
     .regex(/^[A-Za-zÀ-ÿ.'\-\s]+$/, "Name can only contain letters, spaces, and . ' -")
     .refine((v) => !isTestString(v), {
-      message: 'Please enter your real full name (not a placeholder like "Juan Dela Cruz" or "test").',
+      message: 'Please enter your real full name.',
     }),
 
   email: z
@@ -165,7 +134,7 @@ const customerSchema = z.object({
     .email('Enter a valid email address')
     .max(120, 'Email is too long')
     .refine((v) => !isFakeEmail(v), {
-      message: 'Please use a real, active email address (not a disposable or placeholder inbox).',
+      message: 'Please use a real, active email address.',
     }),
 
   phone: z
@@ -173,10 +142,7 @@ const customerSchema = z.object({
     .trim()
     .min(1, 'Mobile number is required')
     .transform(normalizePhone)
-    .refine((v) => /^09\d{9}$/.test(v), {
-      message: 'Enter a valid PH mobile number (e.g. 0917 123 4567)',
-    })
-    .refine((v) => !/^09(0{9}|1{9}|2{9}|3{9}|4{9}|5{9}|6{9}|7{9}|8{9}|9{9})$/.test(v), {
+    .refine((v) => /^09\d{9}$/.test(v), { message: 'Enter a valid PH mobile number (e.g. 0917 123 4567)', }) .refine((v) => !/^09(0{9}\vert{}1{9}\vert{}2{9}\vert{}3{9}\vert{}4{9}\vert{}5{9}\vert{}6{9}\vert{}7{9}\vert{}8{9}\vert{}9{9})$/.test(v), {
       message: 'Please enter a real mobile number.',
     }),
 
@@ -303,13 +269,13 @@ export function Booking() {
 
   if (!bookingsEnabled) {
     return (
-      <div className="min-h-screen bg-charcoal">
+      <div className="min-h-screen bg-slate-50 text-slate-900">
         <Navbar />
         <div className="container-page flex flex-col items-center justify-center gap-4 pt-32 pb-24 text-center">
-          <AlertCircle className="h-10 w-10 text-amber-400" />
+          <AlertCircle className="h-10 w-10 text-amber-500" />
           <div>
-            <h1 className="text-lg font-bold text-cream">Online bookings are closed</h1>
-            <p className="mt-1 text-sm text-cream-muted">
+            <h1 className="text-xl font-black text-slate-900">Online bookings are closed</h1>
+            <p className="mt-1 text-sm text-slate-600">
               Please check back soon or contact the venue directly. Existing bookings are unaffected.
             </p>
           </div>
@@ -324,7 +290,7 @@ export function Booking() {
 
   if (loadingCourts && courts.length === 0) {
     return (
-      <div className="min-h-screen bg-charcoal">
+      <div className="min-h-screen bg-slate-50 text-slate-900">
         <Navbar />
         <LoadingSpinner className="pt-32" />
         <Footer />
@@ -334,14 +300,14 @@ export function Booking() {
 
   if (selectedSlots.length === 0) {
     return (
-      <div className="min-h-screen bg-charcoal">
+      <div className="min-h-screen bg-slate-50 text-slate-900">
         <Navbar />
         <div className="container-page flex flex-col items-center justify-center gap-4 pt-32 pb-24 text-center">
-          <CalendarDays className="h-10 w-10 text-cream-muted/40" />
+          <CalendarDays className="h-12 w-12 text-slate-300" />
           <div>
-            <h1 className="text-lg font-bold text-cream">No court or time selected yet</h1>
-            <p className="mt-1 text-sm text-cream-muted">
-              Head back to the homepage to pick a court and a time slot first.
+            <h1 className="text-xl font-black text-slate-900">No court or time selected yet</h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Head back to the schedule to pick a court and a time slot first.
             </p>
           </div>
           <Button size="md" to="/" leftIcon={<ArrowLeft className="h-4 w-4" />}>
@@ -354,48 +320,49 @@ export function Booking() {
   }
 
   return (
-    <div className="min-h-screen bg-charcoal text-cream">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
       <div className="container-page pt-24 pb-32 lg:pb-16">
-        <div className="mb-5 sm:mb-6">
-          <h1 className="text-2xl font-bold tracking-tight text-cream sm:text-3xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Confirm & Book
           </h1>
-          <p className="text-xs text-cream-muted sm:text-sm">
+          <p className="text-xs text-slate-600 sm:text-sm">
             Step 1 of 2: review your selection and enter your details. Payment comes next.
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-xl border border-error/20 bg-error/10 p-3 text-xs font-medium text-error">
+          <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-700">
             {error}
           </div>
         )}
 
-        <div className="grid gap-5 md:gap-6 lg:grid-cols-3">
-          <div className="space-y-5 lg:col-span-2">
-            <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-4 sm:p-5 shadow-xl backdrop-blur-sm">
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-300">
-                  <CalendarDays className="h-3.5 w-3.5 text-primary-300" />
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            {/* Selection Card */}
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#3D1164]">
+                  <CalendarDays className="h-4 w-4 text-[#FF7A00]" />
                   Your Selection ({selectedCourts.length} court
                   {selectedCourts.length !== 1 ? 's' : ''})
                 </h2>
                 <Link
                   to="/"
-                  className="flex items-center gap-1 text-xs font-semibold text-cream-muted underline decoration-dotted transition hover:text-primary-300"
+                  className="flex items-center gap-1 text-xs font-bold text-[#FF7A00] hover:text-[#E56600] transition"
                 >
                   <Pencil className="h-3 w-3" />
                   Edit selection
                 </Link>
               </div>
 
-              <p className="mb-3 text-xs font-medium text-cream-muted">
+              <p className="mb-4 text-xs font-bold text-slate-700">
                 {formatDateLong(selectedDate)}
               </p>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {selectedCourts.map((court) => {
                   const courtSlots = selectedSlots.filter((s) => {
                     const timeSlot = slots.find((t) => t.id === s.slot_id);
@@ -404,9 +371,9 @@ export function Booking() {
                   return (
                     <div
                       key={court.id}
-                      className="flex items-center gap-3.5 rounded-xl border border-primary-500/40 bg-neutral-950/60 p-3.5 transition"
+                      className="flex items-center gap-3.5 rounded-2xl border border-purple-100 bg-purple-50/40 p-4 transition"
                     >
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-neutral-700 sm:h-16 sm:w-16">
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-slate-200 sm:h-16 sm:w-16">
                         <img
                           src={court.image}
                           alt={court.name}
@@ -414,18 +381,18 @@ export function Booking() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-sm font-bold text-cream sm:text-base">
+                        <h3 className="truncate text-sm font-bold text-slate-900 sm:text-base">
                           {court.name}
                         </h3>
-                        <p className="truncate text-xs text-cream-muted">
+                        <p className="truncate text-xs text-slate-500">
                           {court.surface || court.description}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-accent-400">
+                        <p className="text-sm font-black text-[#FF7A00]">
                           {formatCurrency(courtSlots.reduce((sum, s) => sum + s.price, 0))}
                         </p>
-                        <p className="text-[11px] text-cream-muted">
+                        <p className="text-[11px] font-medium text-slate-500">
                           {courtSlots.length} slot{courtSlots.length !== 1 ? 's' : ''}
                         </p>
                       </div>
@@ -434,27 +401,27 @@ export function Booking() {
                 })}
               </div>
 
-              <div className="mt-3.5 space-y-2">
+              <div className="mt-4 space-y-2">
                 {selectedSlots.map((slot) => {
                   const court = getCourtForSlot(slot.slot_id);
                   return (
                     <div
                       key={slot.slot_id}
-                      className="flex items-center justify-between rounded-xl border border-neutral-700 bg-neutral-800/80 px-3.5 py-2.5"
+                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-2.5"
                     >
                       <div className="flex min-w-0 items-center gap-2">
-                        <Clock className="h-3.5 w-3.5 shrink-0 text-primary-300" />
-                        <span className="truncate text-xs font-medium text-cream sm:text-sm">
+                        <Clock className="h-3.5 w-3.5 shrink-0 text-[#3D1164]" />
+                        <span className="truncate text-xs font-semibold text-slate-800 sm:text-sm">
                           {court?.name || 'Court'} ·{' '}
                           {formatTimeRange(slot.start_time, slot.end_time)}
                         </span>
                         {slot.type === 'fixed_2hr' && (
-                          <span className="shrink-0 rounded-full border border-primary-400/40 bg-primary-500/30 px-2 py-0.5 text-[10px] font-bold text-primary-200">
+                          <span className="shrink-0 rounded-full border border-purple-200 bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-[#3D1164]">
                             {FIXED_SLOT.label}
                           </span>
                         )}
                       </div>
-                      <span className="shrink-0 pl-2 text-xs font-bold text-accent-400 sm:text-sm">
+                      <span className="shrink-0 pl-2 text-xs font-black text-[#FF7A00] sm:text-sm">
                         {formatCurrency(slot.price)}
                       </span>
                     </div>
@@ -462,34 +429,35 @@ export function Booking() {
                 })}
               </div>
 
-              <div className="mt-4 flex items-center justify-between border-t border-neutral-700 pt-3.5">
-                <span className="text-xs text-cream-muted">
+              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
+                <span className="text-xs font-medium text-slate-500">
                   {selectedSlots.length} slot{selectedSlots.length !== 1 ? 's' : ''} selected
                 </span>
-                <span className="font-display text-xl font-extrabold text-accent-400">
+                <span className="font-display text-xl font-black text-[#3D1164]">
                   {formatCurrency(total)}
                 </span>
               </div>
             </div>
 
+            {/* Customer Details Form */}
             <div
               ref={formRef}
-              className="card rounded-2xl border border-neutral-700 bg-neutral-900/80 p-4 scroll-mt-24 sm:p-5 shadow-xl backdrop-blur-sm"
+              className="rounded-3xl border border-slate-200 bg-white p-5 scroll-mt-24 sm:p-6 shadow-sm"
             >
-              <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary-300">
+              <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-[#3D1164]">
                 Your Details
               </h2>
               <form
                 id="bookingForm"
                 onSubmit={handleSubmit(onSubmit, onInvalid)}
-                className="space-y-3.5"
+                className="space-y-4"
                 noValidate
               >
-                <div className="grid gap-3.5 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <Input
                     id="name"
                     label="Full Name"
-                    placeholder="Juan Dela Cruz"
+                    placeholder="e.g. Maria Santos"
                     autoComplete="name"
                     leftIcon={<User className="h-4 w-4" />}
                     error={errors.name?.message}
@@ -513,7 +481,7 @@ export function Booking() {
                   type="email"
                   inputMode="email"
                   autoComplete="email"
-                  placeholder="juan@email.com"
+                  placeholder="name@email.com"
                   leftIcon={<Mail className="h-4 w-4" />}
                   error={errors.email?.message}
                   {...register('email')}
@@ -527,57 +495,54 @@ export function Booking() {
                   />
                   <p
                     className={`mt-1 text-right text-[11px] ${
-                      notesLength > NOTES_MAX ? 'text-error' : 'text-cream-muted'
+                      notesLength > NOTES_MAX ? 'text-rose-600 font-bold' : 'text-slate-400'
                     }`}
                   >
                     {notesLength}/{NOTES_MAX}
                   </p>
                 </div>
 
-                <div className="flex items-start gap-2.5 rounded-xl border border-primary-500/30 bg-primary-500/10 p-3.5">
-                  <Timer className="mt-0.5 h-4 w-4 shrink-0 text-primary-300" />
-                  <p className="text-xs leading-relaxed text-cream-muted">
-                    <strong className="font-semibold text-primary-200">
-                      Heads up:
-                    </strong>{' '}
-                    your slot is held for {HOLD_MINUTES} minutes after you continue. Pay and submit
-                    your reference within that time, or the hold is released.
+                <div className="flex items-start gap-3 rounded-2xl border border-orange-200 bg-orange-50/70 p-4">
+                  <Timer className="mt-0.5 h-4 w-4 shrink-0 text-[#FF7A00]" />
+                  <p className="text-xs leading-relaxed text-slate-700">
+                    <strong className="font-bold text-[#FF7A00]">Heads up:</strong> your slot is held
+                    for {HOLD_MINUTES} minutes after you continue. Complete payment within that time to lock in your court.
                   </p>
                 </div>
 
-                <div className="flex items-start gap-2.5 rounded-xl border border-neutral-700 bg-neutral-950/60 p-3.5">
+                <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                   <input
                     type="checkbox"
                     id="termsAccepted"
                     {...register('termsAccepted')}
-                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-neutral-600 bg-neutral-950 accent-primary-500 focus:ring-2 focus:ring-primary-500/40"
+                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 accent-[#FF7A00] focus:ring-2 focus:ring-[#FF7A00]/30"
                   />
                   <label
                     htmlFor="termsAccepted"
-                    className="cursor-pointer select-none text-xs leading-relaxed text-cream-muted sm:text-sm"
+                    className="cursor-pointer select-none text-xs leading-relaxed text-slate-600 sm:text-sm"
                   >
                     I have read and agree to the{' '}
                     <Link
                       to="/terms"
                       target="_blank"
                       rel="noreferrer"
-                      className="font-semibold text-primary-300 underline underline-offset-2 hover:text-primary-200"
+                      className="font-bold text-[#3D1164] underline underline-offset-2 hover:text-[#FF7A00]"
                     >
                       Terms & Conditions
                     </Link>
-                    .
+                    . All bookings are final and non-refundable.
                   </label>
                 </div>
 
                 {errors.termsAccepted && (
-                  <p className="flex items-center gap-1.5 rounded-lg border border-error/30 bg-error/10 px-2.5 py-2 text-xs font-medium text-error">
-                    <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+                  <p className="flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700">
+                    <ShieldCheck className="h-4 w-4 shrink-0" />
                     {errors.termsAccepted.message}
                   </p>
                 )}
 
                 {submitError && (
-                  <p className="rounded-xl border border-error/30 bg-error/10 p-2.5 text-xs font-medium text-error">
+                  <p className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700">
                     {submitError}
                   </p>
                 )}
@@ -585,14 +550,15 @@ export function Booking() {
             </div>
           </div>
 
+          {/* Desktop Summary Column */}
           <div className="hidden lg:col-span-1 lg:block">
-            <div className="sticky top-24 space-y-3">
-              <div className="card rounded-2xl border border-neutral-700 bg-neutral-900/90 p-5 shadow-xl">
-                <h2 className="mb-3.5 font-display text-base font-bold text-cream">
+            <div className="sticky top-24 space-y-4">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h2 className="mb-4 font-display text-base font-black text-slate-900 uppercase">
                   Booking Summary
                 </h2>
 
-                <div className="mb-3.5 space-y-2">
+                <div className="mb-4 space-y-2">
                   {selectedCourts.map((court) => {
                     const courtSlots = selectedSlots.filter((s) => {
                       const timeSlot = slots.find((t) => t.id === s.slot_id);
@@ -601,16 +567,16 @@ export function Booking() {
                     return (
                       <div
                         key={court.id}
-                        className="rounded-xl border border-neutral-700 bg-neutral-950/60 p-3"
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5"
                       >
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-cream-muted">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                           Court
                         </p>
-                        <p className="text-sm font-bold text-cream">{court.name}</p>
-                        <p className="text-[11px] text-cream-muted">
+                        <p className="text-sm font-bold text-slate-900">{court.name}</p>
+                        <p className="text-[11px] text-slate-500">
                           {formatDateLong(selectedDate)}
                         </p>
-                        <p className="mt-1.5 text-xs font-semibold text-accent-400">
+                        <p className="mt-1 text-xs font-extrabold text-[#FF7A00]">
                           {courtSlots.length} slot{courtSlots.length !== 1 ? 's' : ''} ·{' '}
                           {formatCurrency(courtSlots.reduce((sum, s) => sum + s.price, 0))}
                         </p>
@@ -619,46 +585,34 @@ export function Booking() {
                   })}
                 </div>
 
-                <AnimatePresence mode="popLayout">
-                  <motion.div
-                    key="slots"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="space-y-1.5"
-                  >
-                    {selectedSlots.map((slot) => {
-                      const court = getCourtForSlot(slot.slot_id);
-                      return (
-                        <div
-                          key={slot.slot_id}
-                          className="flex items-center justify-between rounded-lg bg-neutral-800/80 px-3 py-2 text-xs"
-                        >
-                          <div className="min-w-0 flex-1 pr-2">
-                            <p className="truncate font-medium text-cream">
-                              {court?.name || 'Court'} ·{' '}
-                              {formatTimeRange(slot.start_time, slot.end_time)}
-                            </p>
-                            {slot.type === 'fixed_2hr' && (
-                              <span className="text-[10px] font-bold text-primary-300">
-                                {FIXED_SLOT.label}
-                              </span>
-                            )}
-                          </div>
-                          <span className="shrink-0 font-bold text-accent-400">
-                            {formatCurrency(slot.price)}
-                          </span>
+                <div className="space-y-1.5 border-t border-slate-100 pt-3">
+                  {selectedSlots.map((slot) => {
+                    const court = getCourtForSlot(slot.slot_id);
+                    return (
+                      <div
+                        key={slot.slot_id}
+                        className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-xs"
+                      >
+                        <div className="min-w-0 flex-1 pr-2">
+                          <p className="truncate font-semibold text-slate-800">
+                            {court?.name || 'Court'} ·{' '}
+                            {formatTimeRange(slot.start_time, slot.end_time)}
+                          </p>
                         </div>
-                      );
-                    })}
-                  </motion.div>
-                </AnimatePresence>
+                        <span className="shrink-0 font-bold text-[#FF7A00]">
+                          {formatCurrency(slot.price)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
 
-                <div className="mt-4 border-t border-neutral-700 pt-3.5">
+                <div className="mt-4 border-t border-slate-200 pt-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-cream-muted">
+                    <span className="text-xs font-medium text-slate-500">
                       {selectedSlots.length} slot{selectedSlots.length !== 1 ? 's' : ''}
                     </span>
-                    <span className="font-display text-2xl font-extrabold text-accent-400">
+                    <span className="font-display text-2xl font-black text-[#3D1164]">
                       {formatCurrency(total)}
                     </span>
                   </div>
@@ -667,7 +621,7 @@ export function Booking() {
                 <Button
                   size="lg"
                   fullWidth
-                  className="mt-4"
+                  className="mt-5 bg-[#FF7A00] hover:bg-[#E56600] text-white font-black shadow-sm"
                   isLoading={submitting}
                   onClick={handleSummaryButtonClick}
                   rightIcon={<ArrowRight className="h-5 w-5" />}
@@ -675,39 +629,8 @@ export function Booking() {
                 >
                   Continue to Payment
                 </Button>
-                <p className="mt-2 text-center text-[11px] text-cream-muted">
-                  You won&apos;t be charged yet. Payment is the next step.
-                </p>
-
-                <p className="mt-3 text-center text-[11px] text-cream-muted">
-                  View our{' '}
-                  <Link
-                    to="/terms"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-semibold text-primary-300 underline"
-                  >
-                    Terms
-                  </Link>
-                  ,{' '}
-                  <Link
-                    to="/privacy"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-semibold text-primary-300 underline"
-                  >
-                    Privacy Policy
-                  </Link>
-                  , and{' '}
-                  <Link
-                    to="/refund-policy"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-semibold text-primary-300 underline"
-                  >
-                    No Refund Policy
-                  </Link>
-                  .
+                <p className="mt-2.5 text-center text-[11px] text-slate-500">
+                  Payment is confirmed in the next step.
                 </p>
               </div>
             </div>
@@ -715,16 +638,17 @@ export function Booking() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-700 bg-neutral-950/95 p-3.5 backdrop-blur-md lg:hidden">
+      {/* Mobile Sticky Bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3.5 shadow-xl backdrop-blur-md lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] uppercase font-semibold tracking-wider text-cream-muted">
+            <p className="text-[11px] uppercase font-bold tracking-wider text-slate-500">
               {selectedSlots.length} slot{selectedSlots.length !== 1 ? 's' : ''} selected
             </p>
-            <p className="text-xl font-extrabold text-accent-400">{formatCurrency(total)}</p>
+            <p className="text-xl font-black text-[#3D1164]">{formatCurrency(total)}</p>
             {errors.termsAccepted && (
-              <p className="mt-0.5 text-[10px] font-medium text-error">
-                ⚠ Agree to Terms above
+              <p className="mt-0.5 text-[10px] font-bold text-rose-600">
+                ⚠ Please agree to terms
               </p>
             )}
           </div>
@@ -733,14 +657,14 @@ export function Booking() {
             isLoading={submitting}
             onClick={handleSummaryButtonClick}
             rightIcon={<ArrowRight className="h-4 w-4" />}
-            className="shrink-0 px-6"
+            className="shrink-0 px-6 bg-[#FF7A00] hover:bg-[#E56600] text-white font-black"
             disabled={!bookingsEnabled}
           >
             Continue
           </Button>
         </div>
         {submitError && (
-          <p className="mt-2 rounded-lg border border-error/30 bg-error/10 p-2 text-xs font-medium text-error">
+          <p className="mt-2 rounded-xl border border-rose-200 bg-rose-50 p-2 text-xs font-semibold text-rose-700">
             {submitError}
           </p>
         )}
