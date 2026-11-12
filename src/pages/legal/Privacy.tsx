@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 
 export function Privacy() {
   useEffect(() => {
-    document.title = 'Privacy Policy | Smash Point Pickle Sports Center';
+    document.title = 'Privacy Policy | Smash Zone Recreational Hub';
     window.scrollTo(0, 0);
   }, []);
 
@@ -35,7 +35,7 @@ export function Privacy() {
           <div className="space-y-8">
             <section className="rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6">
               <p className="text-sm leading-relaxed text-cream-muted">
-                Smash Point Pickle Sports Center respects your privacy. This policy explains what
+                Smash Zone Recreational Hub respects your privacy. This policy explains what
                 information we collect when you book a court, why we collect it, and how we protect it.
               </p>
             </section>
@@ -81,7 +81,7 @@ export function Privacy() {
               <ul className="space-y-2 text-sm text-cream-muted">
                 <li className="flex items-center gap-2.5">
                   <Mail className="h-4 w-4 shrink-0 text-primary-300" />
-                  <span>smashpoint@gmail.com</span>
+                  <span>smashzonetandag@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Facebook className="h-4 w-4 shrink-0 text-primary-300" />
@@ -91,7 +91,7 @@ export function Privacy() {
                     rel="noopener noreferrer"
                     className="hover:text-primary-300 transition"
                   >
-                    Smash Point Pickle Sports Center
+                    Smash Zone Recreational Hub
                   </a>
                 </li>
                 <li className="flex items-start gap-2.5">

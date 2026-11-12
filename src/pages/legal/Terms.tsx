@@ -17,7 +17,7 @@ const rules = [
 
 export function Terms() {
   useEffect(() => {
-    document.title = 'Terms & Conditions | Smash Point Pickle Sports Center';
+    document.title = 'Terms & Conditions | Smash Zone Recreational Hub';
     window.scrollTo(0, 0);
   }, []);
 
@@ -45,7 +45,7 @@ export function Terms() {
           <div className="space-y-8">
             <section className="rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6">
               <p className="text-sm leading-relaxed text-cream-muted">
-                By booking a court or using the facilities of Smash Point Pickle Sports Center, you
+                By booking a court or using the facilities of Smash Zone Recreational Hub, you
                 agree to these Terms & Conditions. Please read them before making a reservation.
               </p>
             </section>
@@ -54,7 +54,7 @@ export function Terms() {
               <h2 className="mb-3 text-lg font-bold text-cream">1. Bookings</h2>
               <p className="text-sm leading-relaxed text-cream-muted">
                 All bookings are subject to court availability. A booking is confirmed only after
-                payment is verified and you receive a confirmation email. Smash Point may cancel or
+                payment is verified and you receive a confirmation email. Smash Zone may cancel or
                 reschedule bookings for maintenance, safety, or events beyond our control.
               </p>
             </section>
@@ -89,7 +89,7 @@ export function Terms() {
             <section className="rounded-2xl border border-neutral-700 bg-neutral-900/80 p-5 sm:p-6">
               <h2 className="mb-3 text-lg font-bold text-cream">4. Conduct</h2>
               <p className="text-sm leading-relaxed text-cream-muted">
-                Players must treat staff, other players, and the facility with respect. Smash Point
+                Players must treat staff, other players, and the facility with respect. Smash Zone
                 may remove anyone behaving disruptively or unsafely, without a refund.
               </p>
             </section>
@@ -108,7 +108,7 @@ export function Terms() {
               <p className="text-sm leading-relaxed text-cream-muted">
                 Pickleball is a physical sport with inherent risk of injury. By booking, players
                 confirm they are fit to play and agree, to the extent permitted by law, to hold Smash
-                Point Pickle Sports Center, its owners, and staff harmless from claims arising from
+                Zone Recreational Hub, its owners, and staff harmless from claims arising from
                 personal injury or property damage during use of the facility.
               </p>
             </section>
@@ -137,7 +137,7 @@ export function Terms() {
               <ul className="space-y-2 text-sm text-cream-muted">
                 <li className="flex items-center gap-2.5">
                   <Mail className="h-4 w-4 shrink-0 text-primary-300" />
-                  <span>smashpoint@gmail.com</span>
+                  <span>smashzonetandag@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Facebook className="h-4 w-4 shrink-0 text-primary-300" />
@@ -147,7 +147,7 @@ export function Terms() {
                     rel="noopener noreferrer"
                     className="hover:text-primary-300 transition"
                   >
-                    Smash Point Pickle Sports Center
+                    Smash Zone Recreational Hub
                   </a>
                 </li>
                 <li className="flex items-start gap-2.5">

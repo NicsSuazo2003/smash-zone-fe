@@ -8,7 +8,7 @@ import { APP_CONFIG } from '@/utils/constants';
 
 export function PaymentPolicy() {
   useEffect(() => {
-    document.title = 'Payment & Verification Policy | Smash Point Pickle Sports Center';
+    document.title = 'Payment & Verification Policy | Smash Zone Recreational Hub';
     window.scrollTo(0, 0);
   }, []);
 
@@ -41,7 +41,7 @@ export function PaymentPolicy() {
               </div>
               <div className="space-y-3 text-sm leading-relaxed text-cream-muted">
                 <p>
-                  Smash Point verifies every payment manually. After you pay, our staff checks the
+                  Smash Zone verifies every payment manually. After you pay, our staff checks the
                   amount and reference before confirming your court booking.
                 </p>
                 <div className="flex items-start gap-2">
@@ -92,7 +92,7 @@ export function PaymentPolicy() {
               <ul className="space-y-2 text-sm text-cream-muted">
                 <li className="flex items-center gap-2.5">
                   <Mail className="h-4 w-4 shrink-0 text-primary-300" />
-                  <span>smashpoint@gmail.com</span>
+                  <span>smashzonetandag@gmail.com</span>
                 </li>
               </ul>
             </section>

@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 
 export function RefundPolicy() {
   useEffect(() => {
-    document.title = 'Refund & Cancellation Policy | Smash Point Pickle Sports Center';
+    document.title = 'Refund & Cancellation Policy | Smash Zone Recreational Hub';
     window.scrollTo(0, 0);
   }, []);
 
@@ -50,7 +50,7 @@ export function RefundPolicy() {
               <h2 className="mb-3 text-lg font-bold text-cream">If You Cannot Play</h2>
               <p className="text-sm leading-relaxed text-cream-muted">
                 You may pass your court slot to someone else. Any payment between you and them is
-                your own arrangement — Smash Point is not involved.
+                your own arrangement — Smash Zone is not involved.
               </p>
             </section>
 
@@ -67,7 +67,7 @@ export function RefundPolicy() {
               <ul className="space-y-2 text-sm text-cream-muted">
                 <li className="flex items-center gap-2.5">
                   <Mail className="h-4 w-4 shrink-0 text-primary-300" />
-                  <span>smashpoint@gmail.com</span>
+                  <span>smashzonetandag@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Facebook className="h-4 w-4 shrink-0 text-primary-300" />
@@ -77,7 +77,7 @@ export function RefundPolicy() {
                     rel="noopener noreferrer"
                     className="hover:text-primary-300 transition"
                   >
-                    Smash Point Pickle Sports Center
+                    Smash Zone Recreational Hub
                   </a>
                 </li>
               </ul>

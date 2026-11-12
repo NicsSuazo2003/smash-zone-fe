@@ -30,7 +30,7 @@ export class ApiError extends Error {
 }
 
 const BASE_URL = APP_CONFIG.apiUrl;
-const CLIENT_SUBDOMAIN = import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashpoint';
+const CLIENT_SUBDOMAIN = import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashzone';
 
 /**
  * Only redirect to /login on 401 when the failing call is one that

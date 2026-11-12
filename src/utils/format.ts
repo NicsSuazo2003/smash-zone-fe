@@ -88,11 +88,11 @@ export function describeAdvanceWindow(maxAdvanceDays: number): string {
 }
 
 /**
- * ⭐ Booking reference prefix — changed from `PJ` (PickleJoe) to `SP` (Smash Point).
- * Example output: SPK7M2XQ
+ * Booking reference prefix: SZ (Smash Zone).
+ * Example output: SZK7M2XQ
  */
 export function generateReferenceCode(): string {
-  const prefix = 'SP';
+  const prefix = 'SZ';
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
   for (let i = 0; i < 6; i++) {

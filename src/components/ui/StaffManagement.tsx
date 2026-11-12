@@ -261,7 +261,7 @@ export function StaffManagement() {
           <Input
             label="Email Address"
             type="email"
-            placeholder="staff@smashpoint.com"
+            placeholder="staff@smashzone.com"
             leftIcon={<Mail className="h-4 w-4" />}
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}

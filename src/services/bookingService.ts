@@ -217,12 +217,12 @@ export const bookingService = {
     try {
       const token = localStorage.getItem('admin_token');
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL || 'https://smashpoint-booking-api.onrender.com'}/api/bookings/${bookingId}/upload-payment`,
+        `${import.meta.env.VITE_API_BASE_URL || 'https://smashzone-booking-api.onrender.com'}/api/bookings/${bookingId}/upload-payment`,
         {
           method: 'POST',
           headers: {
             Authorization: token ? `Bearer ${token}` : '',
-            'X-Client-Subdomain': import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashpoint',
+            'X-Client-Subdomain': import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashzone',
           },
           body: formData,
         }
