@@ -2,6 +2,9 @@ export const APP_CONFIG = {
   name: import.meta.env.VITE_APP_NAME ?? 'Smash Zone',
   fullName: 'Smash Zone by Jerjen',
   subTitle: 'Recreational Hub',
+  address: 'Purok Villa Julia, Rosario, Tandag City, Surigao del Sur',
+  email: 'smashzonetandag@gmail.com',
+  facebookUrl: 'https://www.facebook.com/profile.php?id=61593262286568',
   demoMode: (import.meta.env.VITE_DEMO_MODE ?? 'false') === 'true',
 
   // Render API default for Smash Zone

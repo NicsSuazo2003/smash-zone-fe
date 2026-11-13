@@ -568,7 +568,7 @@ export function Landing() {
             <div className="mt-8 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-600 sm:mt-10 sm:gap-6 sm:text-sm">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-[#FF7A00]" />
-                <span>National Highway, Rosario, Tandag City</span>
+                <span>{APP_CONFIG.address}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4 text-[#FFA81A]" />
@@ -1055,14 +1055,14 @@ export function Landing() {
               Find Us
             </h2>
             <p className="mt-2 text-xs text-slate-500 sm:text-sm">
-              National Highway, Rosario, Tandag City
+              {APP_CONFIG.address}
             </p>
           </div>
 
           <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg">
             <div className="relative w-full aspect-[4/3] sm:aspect-auto sm:h-[480px]">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d280.2669586700182!2d126.20822932494922!3d9.053797356959693!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x330237000c13b973%3A0xfc62991506f06131!2sSmash%20Zone%20by%20Jerjen!5e1!3m2!1sen!2sph!4v1793489693612!5m2!1sen!2sph"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d280.2722937521761!2d126.20612707631298!3d9.04695019464866!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x330237046548978b%3A0x341b1e5937e7eb0b!2sSmash%20Zone%20by%20JerJen!5e1!3m2!1sen!2sph!4v1794577206512!5m2!1sen!2sph"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"

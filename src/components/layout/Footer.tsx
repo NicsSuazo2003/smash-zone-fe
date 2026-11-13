@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   MapPin,
   Facebook,
+  Mail,
   Clock,
   FileText,
   Lock,
@@ -60,7 +61,7 @@ export function Footer() {
 
           <div className="flex items-center gap-3">
             <a
-              href="https://www.facebook.com/psyche.goyongcocatacte"
+              href={APP_CONFIG.facebookUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-[#FF7A00] hover:bg-orange-50/50 hover:text-[#FF7A00]"
@@ -164,18 +165,27 @@ export function Footer() {
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 shrink-0 text-[#FF7A00] mt-0.5" />
                 <span className="leading-relaxed">
-                  National Highway, Rosario, Tandag City, Surigao del Sur
+                  {APP_CONFIG.address}
                 </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail className="h-4 w-4 shrink-0 text-[#FF7A00] mt-0.5" />
+                <a
+                  href={`mailto:${APP_CONFIG.email}`}
+                  className="leading-snug hover:text-[#FF7A00] transition"
+                >
+                  {APP_CONFIG.email}
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Facebook className="h-4 w-4 shrink-0 text-[#FF7A00] mt-0.5" />
                 <a
-                  href="https://www.facebook.com/psyche.goyongcocatacte"
+                  href={APP_CONFIG.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="leading-snug hover:text-[#FF7A00] transition"
                 >
-                  Smash Zone by Jerjen
+                  {APP_CONFIG.fullName}
                 </a>
               </li>
             </ul>

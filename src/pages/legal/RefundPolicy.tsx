@@ -1,9 +1,10 @@
 // src/pages/legal/RefundPolicy.tsx
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { RotateCcw, ArrowLeft, Mail, Facebook, ShieldAlert } from 'lucide-react';
+import { RotateCcw, ArrowLeft, Mail, Facebook, MapPin, ShieldAlert } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { APP_CONFIG } from '@/utils/constants';
 
 export function RefundPolicy() {
   useEffect(() => {
@@ -67,18 +68,24 @@ export function RefundPolicy() {
               <ul className="space-y-2 text-sm text-cream-muted">
                 <li className="flex items-center gap-2.5">
                   <Mail className="h-4 w-4 shrink-0 text-primary-300" />
-                  <span>smashzonetandag@gmail.com</span>
+                  <a href={`mailto:${APP_CONFIG.email}`} className="hover:text-primary-300 transition">
+                    {APP_CONFIG.email}
+                  </a>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Facebook className="h-4 w-4 shrink-0 text-primary-300" />
                   <a
-                    href="https://www.facebook.com/profile.php?id=61594106069425"
+                    href={APP_CONFIG.facebookUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-primary-300 transition"
                   >
-                    Smash Zone Recreational Hub
+                    {APP_CONFIG.fullName}
                   </a>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary-300" />
+                  <span>{APP_CONFIG.address}</span>
                 </li>
               </ul>
             </section>
