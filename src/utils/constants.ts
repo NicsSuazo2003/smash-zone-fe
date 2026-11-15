@@ -10,7 +10,7 @@ export const APP_CONFIG = {
   // Render API default for Smash Zone
   apiUrl:
     import.meta.env.VITE_API_BASE_URL ??
-    'https://smashzone-booking-api.onrender.com',
+    'https://smashzone-api-2ppn.onrender.com',
 
   tagline: 'Smash hard, play smart. Tandag City’s premier pickleball facility.',
   established: '2026',

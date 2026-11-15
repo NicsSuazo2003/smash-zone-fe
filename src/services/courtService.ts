@@ -3,11 +3,12 @@ import type { Court, TimeSlot, BlockedDate, SlotType } from '@/types';
 import { apiRequest } from './api';
 import { mockCourts, generateMockSlots, mockBlockedDates } from './mockData';
 import { MOCK_COURT_GUIDS } from './bookingService';
+import { APP_CONFIG } from '@/utils/constants';
 
 // Check if we should use mock data
 const USE_MOCK_DATA = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
-const BACKEND_BASE_URL = 'https://smashzone-booking-api.onrender.com';
+const BACKEND_BASE_URL = APP_CONFIG.apiUrl;
 
 const DEFAULT_COURT_IMAGES = [
   'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',

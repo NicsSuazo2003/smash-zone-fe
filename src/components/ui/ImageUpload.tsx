@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Loader2, Image } from 'lucide-react';
+import { APP_CONFIG } from '@/utils/constants';
 
 interface ImageUploadProps {
   value: string;
@@ -46,13 +47,7 @@ export function ImageUpload({
 
       const token = localStorage.getItem('admin_token');
       const clientSubdomain = import.meta.env.VITE_CLIENT_SUBDOMAIN ?? 'smashzone';
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
-      if (!apiBaseUrl) {
-        throw new Error('API base URL is not configured');
-      }
-
-      const response = await fetch(`${apiBaseUrl}/api/files/upload?folder=${folder}`, {
+      const response = await fetch(`${APP_CONFIG.apiUrl}/api/files/upload?folder=${folder}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

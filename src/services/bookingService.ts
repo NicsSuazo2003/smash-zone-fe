@@ -1,6 +1,7 @@
 // src/services/bookingService.ts
 import type { Booking, BookingSummary, CustomerDetails } from '@/types';
 import { apiRequest } from './api';
+import { APP_CONFIG } from '@/utils/constants';
 
 export function normalizeBooking(raw: any): Booking {
   const rawSlots: any[] = raw.slots ?? raw.Slots ?? raw.bookingSlots ?? raw.booking_slots ?? [];
@@ -217,7 +218,7 @@ export const bookingService = {
     try {
       const token = localStorage.getItem('admin_token');
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL || 'https://smashzone-booking-api.onrender.com'}/api/bookings/${bookingId}/upload-payment`,
+        `${APP_CONFIG.apiUrl}/api/bookings/${bookingId}/upload-payment`,
         {
           method: 'POST',
           headers: {
